@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainAnchor" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/addFoodItem.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ijse.datadish.controller.EditFoodItemController">
+   <children>
+      <Button fx:id="btAddItem" layoutX="371.0" layoutY="295.0" mnemonicParsing="false" onAction="#editItemAction" prefHeight="31.0" prefWidth="149.0" text="Confirm Changes" />
+      <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" layoutX="58.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" />
+      <VBox layoutX="334.0" layoutY="38.0" prefHeight="200.0" prefWidth="224.0" spacing="20.0">
+         <children>
+            <Label fx:id="lblId" text="Food Id">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtName" promptText="Name" />
+            <TextField fx:id="txtPrice" promptText="Price" />
+            <TextField fx:id="txtCategory" promptText="Catrgory" />
+            <CheckBox fx:id="btAvailable" mnemonicParsing="false" text="Available">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </CheckBox>
+         </children>
+      </VBox>
+      <Button fx:id="btImageChoose" layoutX="83.0" layoutY="295.0" mnemonicParsing="false" onAction="#changeImageAction" prefHeight="31.0" prefWidth="149.0" text="Change Image" />
+   </children>
+</AnchorPane>

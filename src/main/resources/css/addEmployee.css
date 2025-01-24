@@ -1,0 +1,18 @@
+#txtName,#txtContact,#txtAddress,#txtUserName,#txtPassword,#txtConfirmPassword , #txtEmail , #txtEmail , #txtCapacity , #txtNewPassword , #txtOtp ,#txtItemName ,#txtItemQty , #txtStockLevel{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+}
+
+#btNextPage , #btDetails , #btLogInInfo ,#btSignUp{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-text-fill: black;
+}
+
+#btNextPage:hover  ,  #btDetails:hover , #btLogInInfo:hover , #btSignUp:hover{
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-text-fill: black;
+}

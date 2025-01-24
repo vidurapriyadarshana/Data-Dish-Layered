@@ -1,0 +1,95 @@
+#btUpdateItem , #btAddEmployee , #btAddItem ,#btAddTable, #btAddSalary {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-text-fill: black;
+}
+
+#btnAddItem:hover, #btDeleteItem:hover , #btUpdateItem:hover ,  #btAddEmployee:hover ,  #btAddItem:hover , #btAddTable:hover  , #btAddSalary:hover{
+    -fx-border-color: black;
+    -fx-text-fill: black;
+}
+
+#btEmployee , #btSalary{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-text-fill: black;
+    -fx-border-width: 2px 2px 0 2px;
+}
+
+#btEmployee:hover, #btSalary:hover{
+    -fx-border-color: black;
+    -fx-text-fill: black;
+    -fx-border-width: 2px 2px 0 2px;
+}
+
+
+#itemMenuTable{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+#employeeTable{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+#tableSalary{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+#loadTable{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+#inventoryTable{
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-border-width: 0 0 2px 0;
+    -fx-text-fill: black;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+#itemMenuTable .column-header, #employeeTable .column-header , #inventoryTable .column-header , #loadTable .column-header , #tableSalary .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-alignment: CENTER;
+}
+
+#itemMenuTable .column-header-background, #employeeTable .column-header-background  , #inventoryTable .column-header-background , #loadTable .column-header-background , #tableSalary .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#itemMenuTable .table-cell, #employeeTable .table-cell , #inventoryTable .table-cell , #loadTable .table-cell {
+    -fx-alignment: CENTER;
+    -fx-text-fill: black;
+    -fx-padding: 5px;
+}
+
+#itemMenuTable .table-row-cell:selected, #employeeTable .table-row-cell:selected, #inventoryTable .table-row-cell:selected , #loadTable .table-row-cell:selected {
+    -fx-background-color: #d0d0d0;
+}
+
+

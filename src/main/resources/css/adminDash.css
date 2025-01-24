@@ -1,0 +1,36 @@
+#mainAnchor{
+    -fx-background-color: #FFFFFF;
+}
+
+#menuAnchor{
+    -fx-background-color: #F9F6F7;
+}
+
+#loadPageAnchor{
+    -fx-background-color: #F9F6F7;
+}
+
+#btnHome, #btnResavtion, #btnReports, #btnInventory ,#btnEmployee , #btnAddItem , #btOrders {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF971D;
+    -fx-text-fill: black;
+}
+
+#btnHome:hover, #btnResavtion:hover, #btnReports:hover , #btnInventory:hover , #btnEmployee:hover ,#btnAddItem:hover , #btOrders:hover {
+    -fx-border-color: black;
+    -fx-text-fill: black;
+}
+
+
+#btnLogOut{
+    -fx-background-color: transparent;
+    -fx-border-color: #e74c3c;
+    -fx-text-fill: black;
+}
+
+#btnLogOut:hover {
+    -fx-background-color: #e74c3c ;
+    -fx-border-color: white;
+    -fx-text-fill: white;
+}
+
