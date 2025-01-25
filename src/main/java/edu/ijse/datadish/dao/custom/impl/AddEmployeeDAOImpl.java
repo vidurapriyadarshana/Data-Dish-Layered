@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddEmployeeDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
 
@@ -8,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddEmployeeDAOImpl {
+public class AddEmployeeDAOImpl implements AddEmployeeDAO {
 
     public boolean saveEmployee(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
         String employeeSql = "INSERT INTO employee (EmployeeID, Name, Contact, HireDate, Status, Address, Email, UserName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -67,8 +68,7 @@ public class AddEmployeeDAOImpl {
         }
     }
 
-
-    public static String generateNextID() {
+    public String generateNextID() {
         String nextID = null;
 
         try {

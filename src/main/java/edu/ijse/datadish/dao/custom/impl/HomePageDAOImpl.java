@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.HomePageDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.dto.OrderDto;
@@ -9,9 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomePageDAOImpl {
+public class HomePageDAOImpl implements HomePageDAO {
 
-    public static List<FoodDto> getAllMenuItems() {
+    public List<FoodDto> getAllMenuItems() {
         List<FoodDto> foodItems = new ArrayList<>();
         String sql = "SELECT * FROM menuitem";
 
@@ -37,8 +38,7 @@ public class HomePageDAOImpl {
         return foodItems;
     }
 
-
-    public static boolean saveOrder(List<OrderItemDto> orderItemsDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
+    public boolean saveOrder(List<OrderItemDto> orderItemsDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
 
         String customer = "INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)";
         String orders = "INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)";
@@ -117,30 +117,7 @@ public class HomePageDAOImpl {
         }
     }
 
-
-//    public static boolean saveOrder(List<OrderItemDto> orderItems, OrderDto order) throws SQLException, ClassNotFoundException {
-//        String customer = "INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?) ";
-//        String orders = "INSERT INTO orders VALUES (?,?,?,?,?,?)";
-//        String menuOrderItem = " INSERT INTO menuorderitem(MenuItemID,OrderID,Qty) VALUES (?,?,?)";
-//
-//
-//        Connection connection = DBConnection.getInstance().getConnection();
-//        PreparedStatement preparedStatement = connection.prepareStatement(customer);
-//
-//        preparedStatement.setString(1, order.getCustomerId());
-//        preparedStatement.setString(2, order.getCustomerName());
-//        preparedStatement.setString(3, order.getCustomerContact());
-//
-//        int rowsInserted = preparedStatement.executeUpdate();
-//
-//        if (rowsInserted > 0) {
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-    public static String generateNextOrderID() {
+    public String generateNextOrderID() {
         String nextID = "O001";
 
         try (Connection connection = DBConnection.getInstance().getConnection();
@@ -165,7 +142,7 @@ public class HomePageDAOImpl {
         return nextID;
     }
 
-    public static String generateNextCustomerID() {
+    public String generateNextCustomerID() {
         String nextID = "C001";
 
         try (Connection connection = DBConnection.getInstance().getConnection();

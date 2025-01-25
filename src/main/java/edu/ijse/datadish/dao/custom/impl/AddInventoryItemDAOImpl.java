@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddInventoryItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
 
@@ -8,9 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddInventoryItemDAOImpl {
+public class AddInventoryItemDAOImpl implements AddInventoryItemDAO {
 
-    public static boolean addItem(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
+    public boolean addItem(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -23,7 +24,7 @@ public class AddInventoryItemDAOImpl {
         return statement.executeUpdate() > 0;
     }
 
-    public static String generateNextID() {
+    public String generateNextID() {
         String nextID = null;
 
         try {

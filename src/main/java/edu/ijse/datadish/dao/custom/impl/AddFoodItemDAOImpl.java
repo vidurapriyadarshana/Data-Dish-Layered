@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddFoodItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
 
@@ -14,7 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddFoodItemDAOImpl {
+public class AddFoodItemDAOImpl implements AddFoodItemDAO {
 
     private static final String IMAGES_DIR = "src/main/resources/assets/food/";
 
@@ -44,7 +45,7 @@ public class AddFoodItemDAOImpl {
         }
     }
 
-    public static String generateNextID() {
+    public String generateNextID() {
         String nextID = null;
 
         try {
@@ -71,7 +72,7 @@ public class AddFoodItemDAOImpl {
         return nextID;
     }
 
-    public static String saveImage(File sourceFile, String itemName) throws IOException {
+    public String saveImage(File sourceFile, String itemName) throws IOException {
         String fileExtension = getFileExtension(sourceFile.getName());
         String uniqueFilename = "_" + System.currentTimeMillis() + fileExtension;
         Path destinationPath = Paths.get(IMAGES_DIR, uniqueFilename);

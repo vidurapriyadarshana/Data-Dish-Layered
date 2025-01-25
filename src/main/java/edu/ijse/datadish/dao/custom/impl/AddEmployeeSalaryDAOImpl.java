@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddEmployeeSalaryDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.SalaryDto;
 
@@ -10,9 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddEmployeeSalaryDAOImpl {
+public class AddEmployeeSalaryDAOImpl implements AddEmployeeSalaryDAO {
 
-    public static List<String> getEmployeeNames() throws SQLException, ClassNotFoundException {
+    public  List<String> getEmployeeNames() throws SQLException, ClassNotFoundException {
         String sql = "SELECT Name FROM employee";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -27,7 +28,7 @@ public class AddEmployeeSalaryDAOImpl {
         return employeeNames;
     }
 
-    public static String getEmployeeId(String employeeName) throws SQLException, ClassNotFoundException {
+    public  String getEmployeeId(String employeeName) throws SQLException, ClassNotFoundException {
         String sql = "SELECT EmployeeID FROM employee WHERE Name = ?";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -42,8 +43,7 @@ public class AddEmployeeSalaryDAOImpl {
         }
     }
 
-
-    public static boolean addSalary(SalaryDto salaryDto) throws SQLException, ClassNotFoundException {
+    public boolean addSalary(SalaryDto salaryDto) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO salary (SalaryID, EmployeeID,Amount, PaymentDate) VALUES (?, ?, ?, ?)";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -56,7 +56,7 @@ public class AddEmployeeSalaryDAOImpl {
         return statement.executeUpdate() > 0;
     }
 
-    public static String generateNextID() {
+    public String generateNextID() {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             if (connection == null) {

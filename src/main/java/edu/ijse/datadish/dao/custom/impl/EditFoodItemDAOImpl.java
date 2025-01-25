@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.EditFoodItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
 
@@ -12,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 
 import java.sql.*;
 
-public class EditFoodItemDAOImpl {
+public class EditFoodItemDAOImpl implements EditFoodItemDAO {
 
     private static final String PROFILE_IMAGES_DIR = "src/main/resources/assets/food/";
     private FoodDto foodDto = new FoodDto();
@@ -25,7 +26,7 @@ public class EditFoodItemDAOImpl {
         }
     }
 
-    public static String saveImage(File sourceFile, String itemName) throws IOException {
+    public String saveImage(File sourceFile, String itemName) throws IOException {
         String fileExtension = getFileExtension(sourceFile.getName());
         String uniqueFilename = itemName + "_" + System.currentTimeMillis() + fileExtension;
         Path destinationPath = Paths.get(PROFILE_IMAGES_DIR, uniqueFilename);
@@ -33,7 +34,7 @@ public class EditFoodItemDAOImpl {
         return destinationPath.toString();
     }
 
-    private static String getFileExtension(String fileName) {
+    private String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 

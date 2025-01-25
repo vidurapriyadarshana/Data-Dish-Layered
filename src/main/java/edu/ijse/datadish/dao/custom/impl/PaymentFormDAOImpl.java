@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.PaymentFormDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.NotificationDto;
 import edu.ijse.datadish.dto.OrderDto;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentFormDAOImpl {
+public class PaymentFormDAOImpl implements PaymentFormDAO {
     public static List<OrderItemDto> getItemDetails(String orderId) throws SQLException, ClassNotFoundException {
         List<OrderItemDto> orderItemDto = new ArrayList<>();
 
@@ -162,8 +163,6 @@ public class PaymentFormDAOImpl {
             connection.close();
         }
     }
-
-
 
     public static String generateNextPayID() {
         String nextID = null;

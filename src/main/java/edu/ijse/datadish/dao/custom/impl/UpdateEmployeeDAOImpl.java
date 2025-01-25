@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.UpdateEmployeeDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
 
@@ -8,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UpdateEmployeeDAOImpl {
+public class UpdateEmployeeDAOImpl implements UpdateEmployeeDAO {
 
     public boolean updateEmployee(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
         String sql = "UPDATE employee SET Address = ? , Contact = ?, Status = ? , Email = ? WHERE EmployeeID = ?";

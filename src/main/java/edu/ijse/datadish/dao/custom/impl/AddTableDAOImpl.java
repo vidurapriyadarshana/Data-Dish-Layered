@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddTableDAO;
 import edu.ijse.datadish.db.DBConnection;
 
 import java.sql.Connection;
@@ -7,9 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddTableDAOImpl {
+public class AddTableDAOImpl implements AddTableDAO {
 
-    public static String generateNextID() {
+    public String generateNextID() {
         String nextID = null;
 
         try {
@@ -46,7 +47,7 @@ public class AddTableDAOImpl {
         return nextID;
     }
 
-    public static boolean addNewTable(String id, String capacity) throws SQLException, ClassNotFoundException {
+    public boolean addNewTable(String id, String capacity) throws SQLException, ClassNotFoundException {
         String query = "INSERT INTO tableinfo (TableID, Capacity , Status) VALUES (?, ? ,?)";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(query);

@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.EmployeeViewDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
@@ -11,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EmployeeViewDAOImpl {
+public class EmployeeViewDAOImpl implements EmployeeViewDAO {
 
     public ObservableList<EmployeeDto> loadEmpTable() throws SQLException, ClassNotFoundException {
         ObservableList<EmployeeDto> employeeView = FXCollections.observableArrayList();

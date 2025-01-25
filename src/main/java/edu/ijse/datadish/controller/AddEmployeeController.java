@@ -1,6 +1,7 @@
 
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.dao.custom.AddEmployeeDAO;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dao.custom.impl.AddEmployeeDAOImpl;
 import javafx.event.ActionEvent;
@@ -73,72 +74,6 @@ public class AddEmployeeController implements Initializable {
     private AddEmployeeDAOImpl addEmployeeDAOImpl = new AddEmployeeDAOImpl();
 
     private String[] roleChoice = {"Admin","Employee"};
-
-    //    @FXML
-//    public void initialize() {
-//        txtName.setOnAction(event -> txtContact.requestFocus());
-//        txtName.setOnAction(event -> txtAddress.requestFocus());
-//        txtAddress.setOnAction(event -> txtUserName.requestFocus());
-//        txtUserName.setOnAction(event -> txtPassword.requestFocus());
-//        txtPassword.setOnAction(event -> txtConfirmPassword.requestFocus());
-//        txtConfirmPassword.setOnAction(this::addEmployeeAction);
-//
-//    }
-
-//    @FXML
-//    void signUpOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
-//        String name = txtName.getText();
-//        String contact = txtContact.getText();
-//        String address = txtAddress.getText();
-//        String email = txtEmail.getText();
-//
-//        if(name.isEmpty() || contact.isEmpty() || address.isEmpty() || email.isEmpty() || choiceBox.getValue() == null) {
-//            showAlert("Error", "Please fill in all fields.");
-//            return;
-//        }
-//
-//        employeeDto.setEmployeeID(lblEmpId.getText());
-//        employeeDto.setEmployeeName(name);
-//        employeeDto.setEmployeeContact(contact);
-//        employeeDto.setHireDate(lblHireDate.getText());
-//        employeeDto.setAddress(address);
-//        employeeDto.setEmail(email);
-//        employeeDto.setRole(choiceBox.getValue());
-//        employeeDto.setEmployeeStatus("Active");
-//
-//        String userName = txtUserName.getText();
-//        String password = txtPassword.getText();
-//        String confirmPassword = txtConfirmPassword.getText();
-//
-//        if(userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-//            showAlert("Error", "Please fill in all fields.");
-//            return;
-//        }
-//
-//        if(password.length() != 8) {
-//            showAlert("Error", "Password must be at least 8 characters long.");
-//            return;
-//        }
-//
-//        if(!password.equals(confirmPassword)) {
-//            showAlert("Error", "Passwords do not match.");
-//            return;
-//        }
-//
-//        employeeDto.setUserName(userName);
-//        employeeDto.setPassword(password);
-//
-//        boolean isSaved = addEmployeeModel.saveEmployee(employeeDto);
-//
-//        if(isSaved) {
-//            showAlert("Success", "Employee saved successfully.");
-//            Stage stage = (Stage) mainAnchor.getScene().getWindow();
-//            stage.close();
-//        } else {
-//            showAlert("Error", "Employee saving failed.");
-//        }
-//
-//    }
 
     @FXML
     void signUpOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
@@ -222,7 +157,8 @@ public class AddEmployeeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblEmpId.setText(AddEmployeeDAOImpl.generateNextID());
+
+        lblEmpId.setText(new AddEmployeeDAOImpl().generateNextID());
         lblHireDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         choiceBox.getItems().addAll(roleChoice);
 

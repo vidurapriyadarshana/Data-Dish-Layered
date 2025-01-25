@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.TableViewDAO;
 import edu.ijse.datadish.dto.TableDto;
 import edu.ijse.datadish.db.DBConnection;
 import javafx.collections.FXCollections;
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TableViewDAOImpl {
+public class TableViewDAOImpl implements TableViewDAO {
 
     public ObservableList<TableDto> getAllTables() {
         ObservableList<TableDto> tableList = FXCollections.observableArrayList();

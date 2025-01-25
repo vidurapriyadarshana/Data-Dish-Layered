@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.ReportDAO;
 import edu.ijse.datadish.db.DBConnection;
 
 import java.sql.Connection;
@@ -9,8 +10,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReportDAOImpl {
-    public static Map<String, Double> getDailyIncomeData() throws SQLException, ClassNotFoundException {
+public class ReportDAOImpl implements ReportDAO {
+    public Map<String, Double> getDailyIncomeData() throws SQLException, ClassNotFoundException {
         String sql = "SELECT Date, SUM(TotalAmount) AS DailyIncome FROM orders GROUP BY Date";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -23,7 +24,7 @@ public class ReportDAOImpl {
         return dailyIncomeData;
     }
 
-    public static Map<String, Double> getMonthlyProfitData() throws SQLException, ClassNotFoundException {
+    public Map<String, Double> getMonthlyProfitData() throws SQLException, ClassNotFoundException {
         String sql = "SELECT MONTH(Date) AS Month, SUM(TotalAmount) AS MonthlyProfit FROM orders GROUP BY MONTH(Date)";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -36,7 +37,7 @@ public class ReportDAOImpl {
         return profitData;
     }
 
-    public static double getTotalSalaries() throws SQLException, ClassNotFoundException {
+    public double getTotalSalaries() throws SQLException, ClassNotFoundException {
         String sql = "SELECT SUM(Amount) AS TotalSalaries FROM salary";
         Connection connection = DBConnection.getInstance().getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -48,7 +49,7 @@ public class ReportDAOImpl {
         return 0;
     }
 
-    private static String getMonthName(int month) {
+    private String getMonthName(int month) {
         switch (month) {
             case 1: return "January";
             case 2: return "February";

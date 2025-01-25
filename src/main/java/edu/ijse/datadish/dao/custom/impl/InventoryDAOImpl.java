@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.InventoryDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
 import javafx.collections.FXCollections;
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InventoryDAOImpl {
+public class InventoryDAOImpl implements InventoryDAO {
     public ObservableList<InventoryDto> getAllInventoryItems() throws SQLException, ClassNotFoundException {
         ObservableList<InventoryDto> itemView = FXCollections.observableArrayList();
 
@@ -30,7 +31,6 @@ public class InventoryDAOImpl {
         }
         return itemView;
     }
-
     public boolean removeItem(String id) throws SQLException, ClassNotFoundException {
         String sql = "DELETE FROM inventory WHERE inventoryID = ?";
         Connection connection = DBConnection.getInstance().getConnection();

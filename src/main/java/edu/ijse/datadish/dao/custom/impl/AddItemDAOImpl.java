@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.custom.AddItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
 import javafx.collections.FXCollections;
@@ -10,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddItemDAOImpl {
+public class AddItemDAOImpl implements AddItemDAO {
 
     public ObservableList<FoodDto> loadTable() {
         ObservableList<FoodDto> foodItems = FXCollections.observableArrayList();
