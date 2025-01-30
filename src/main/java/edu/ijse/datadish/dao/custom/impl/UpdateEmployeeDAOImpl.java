@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.UpdateEmployeeDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
@@ -8,36 +9,50 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class UpdateEmployeeDAOImpl implements UpdateEmployeeDAO {
 
-    public boolean updateEmployee(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE employee SET Address = ? , Contact = ?, Status = ? , Email = ? WHERE EmployeeID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
+    @Override
+    public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
+        return null;
+    }
 
-        statement.setString(1, employeeDto.getAddress());
-        statement.setString(2, employeeDto.getEmployeeContact());
-        statement.setString(3, employeeDto.getEmployeeStatus());
-        statement.setString(4, employeeDto.getEmail());
-        statement.setString(5, employeeDto.getEmployeeID());
+    @Override
+    public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
+    public void update(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
+        SQLUtil.execute("UPDATE employee SET Address = ? , Contact = ?, Status = ? , Email = ? WHERE EmployeeID = ?",
+                employeeDto.getAddress(),
+                employeeDto.getEmployeeContact(),
+                employeeDto.getEmployeeStatus(),
+                employeeDto.getEmail(),
+                employeeDto.getEmployeeID());
+    }
 
-        int result = statement.executeUpdate();
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-        return result > 0;
+    @Override
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+
+    }
+
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    @Override
+    public EmployeeDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
     public String getEmployeeEmail(String employeeID) throws SQLException, ClassNotFoundException {
-        String sql = "select Email from employee where EmployeeID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, employeeID);
-        ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            return resultSet.getString(1);
-        }
-        return "null";
+        return SQLUtil.execute("SELECT Email FROM employee WHERE EmployeeID = ?", employeeID);
     }
 }

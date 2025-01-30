@@ -1,63 +1,56 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddTableDAO;
 import edu.ijse.datadish.db.DBConnection;
+import edu.ijse.datadish.dto.TableDto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AddTableDAOImpl implements AddTableDAO {
 
-    public String generateNextID() {
-        String nextID = null;
-
-        try {
-            System.out.println("Generating ID...");
-            Connection connection = DBConnection.getInstance().getConnection();
-
-            if (connection == null) {
-                System.out.println("Database connection failed.");
-                return null;
-            }
-
-            System.out.println("Connected to database.");
-
-            String query = "SELECT TableID FROM tableinfo ORDER BY TableID DESC LIMIT 1";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                String lastID = resultSet.getString("TableID");
-                int number = Integer.parseInt(lastID.substring(1));
-                nextID = String.format("T%03d", number + 1);
-                System.out.println("New ID generated: " + nextID);
-            } else {
-                nextID = "T001";
-                System.out.println("No entries found, starting with ID: " + nextID);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-            e.printStackTrace();
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        ResultSet rst = SQLUtil.execute("SELECT TableID FROM tableinfo ORDER BY TableID DESC LIMIT 1");
+        if (rst.next()) {
+            String lastID = rst.getString("TableID");
+            int number = Integer.parseInt(lastID.substring(1));
+            return String.format("T%03d", number + 1);
+        } else {
+            return "T001";
         }
-        return nextID;
+
     }
 
-    public boolean addNewTable(String id, String capacity) throws SQLException, ClassNotFoundException {
-        String query = "INSERT INTO tableinfo (TableID, Capacity , Status) VALUES (?, ? ,?)";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(query);
+    @Override
+    public TableDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
+    }
 
-        statement.setString(1, id);
-        statement.setString(2, capacity);
-        statement.setString(3, "Available");
+    @Override
+    public ArrayList<TableDto> getAll() throws SQLException, ClassNotFoundException {
+        return null;
+    }
 
-        int rowsAffected = statement.executeUpdate();
+    public boolean save(TableDto tableDto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO tableinfo (TableID, Capacity , Status) VALUES (?, ? ,?)", tableDto.getId(), String.valueOf(tableDto.getCapacity()), "Available");
+    }
 
-        return rowsAffected > 0;
+    @Override
+    public void update(TableDto dto) throws SQLException, ClassNotFoundException {
+
+    }
+
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+
     }
 }

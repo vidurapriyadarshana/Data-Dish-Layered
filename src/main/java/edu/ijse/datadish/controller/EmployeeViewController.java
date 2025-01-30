@@ -114,9 +114,9 @@ public class EmployeeViewController implements Initializable {
                         });
 
                         deleteButton.setOnAction(event -> {
-                            EmployeeDto employeeDto = getTableView().getItems().get(getIndex());
+                            String employeeId = getTableView().getItems().get(getIndex()).getEmployeeID();
                             try {
-                                deleteEmployee(employeeDto);
+                                deleteEmployee(employeeId);
                             } catch (SQLException | ClassNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
@@ -171,15 +171,8 @@ public class EmployeeViewController implements Initializable {
         }
     }
 
-    private void deleteEmployee(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
-        boolean isDeleted = employeeViewDAOImpl.deleteEmployee(employeeDto);
-
-        if (isDeleted) {
-            showAlert("Success", "Employee Deleted Successfully");
-            reloadEmployeeTable();
-        } else {
-            showAlert("Error", "Employee Deletion Failed");
-        }
+    private void deleteEmployee(String id) throws SQLException, ClassNotFoundException {
+        employeeViewDAOImpl.delete(id);
     }
 
     private void loadSalaryTable() {

@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.InventoryDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
@@ -10,35 +11,52 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class InventoryDAOImpl implements InventoryDAO {
-    public ObservableList<InventoryDto> getAllInventoryItems() throws SQLException, ClassNotFoundException {
-        ObservableList<InventoryDto> itemView = FXCollections.observableArrayList();
 
-        String sql = "SELECT * FROM inventory";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet resultSet = statement.executeQuery();
+    public ArrayList<InventoryDto> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<InventoryDto> itemList = new ArrayList<>();
+
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM inventory");
 
         while (resultSet.next()) {
-            String id = resultSet.getString("InventoryID");
-            String name = resultSet.getString("ItemName");
-            int qty = resultSet.getInt("Qty");
-            int stockLevel = resultSet.getInt("StockLevel");
-
-            InventoryDto inventoryDto = new InventoryDto(id, name, qty, stockLevel);
-            itemView.add(inventoryDto);
+            itemList.add(new InventoryDto(
+                    resultSet.getString("InventoryID"),
+                    resultSet.getString("ItemName"),
+                    resultSet.getInt("Qty"),
+                    resultSet.getInt("StockLevel")
+            ));
         }
-        return itemView;
+        return itemList;
     }
-    public boolean removeItem(String id) throws SQLException, ClassNotFoundException {
-        String sql = "DELETE FROM inventory WHERE inventoryID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, id);
 
-        int rowsAffected = statement.executeUpdate();
+    @Override
+    public boolean save(InventoryDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-        return rowsAffected > 0;
+    @Override
+    public void update(InventoryDto dto) throws SQLException, ClassNotFoundException {
+
+    }
+
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+        SQLUtil.execute("DELETE FROM inventory WHERE inventoryID = ?", id);
+    }
+
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    @Override
+    public InventoryDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 }

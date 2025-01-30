@@ -1,6 +1,7 @@
 package edu.ijse.datadish.controller;
 
 import edu.ijse.datadish.dao.custom.impl.AddTableDAOImpl;
+import edu.ijse.datadish.dto.TableDto;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,7 +32,7 @@ public class AddTableController implements Initializable {
 
     @FXML
     void addNewTableAction(ActionEvent event) throws SQLException, ClassNotFoundException {
-        boolean result = AddTableDAOImpl.addNewTable(setTableId.getText(), txtCapacity.getText());
+        boolean result = AddTableDAOImpl.addNewTable(new TableDto(setTableId.getText(), Integer.parseInt(txtCapacity.getText())));
 
         if(result) {
             showAlert("Add Table", "Table Added Successfully");

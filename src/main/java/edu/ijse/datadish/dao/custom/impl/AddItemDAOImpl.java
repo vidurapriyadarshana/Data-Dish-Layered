@@ -1,5 +1,7 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import com.mysql.cj.protocol.Resultset;
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
@@ -10,49 +12,58 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AddItemDAOImpl implements AddItemDAO {
 
-    public ObservableList<FoodDto> loadTable() {
-        ObservableList<FoodDto> foodItems = FXCollections.observableArrayList();
+    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<FoodDto> foodItems = new ArrayList<>();
 
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            String query = "SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
+        ResultSet rst = SQLUtil.execute("SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem");
 
-            while (resultSet.next()) {
-                String id = resultSet.getString("MenuItemID");
-                String name = resultSet.getString("Name");
-                double price = resultSet.getDouble("Price");
-                String category = resultSet.getString("Category");
-                String availability = resultSet.getString("Availability");
+        if (rst != null) {
+            while (rst.next()) {
+                String id = rst.getString("MenuItemID");
+                String name = rst.getString("Name");
+                double price = rst.getDouble("Price");
+                String category = rst.getString("Category");
+                String availability = rst.getString("Availability");
 
                 FoodDto foodDto = new FoodDto(id, name, price, category, availability, null);
                 foodItems.add(foodDto);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
 
         return foodItems;
     }
 
-    public boolean delete(String id) {
-        String sql = "DELETE FROM menuitem WHERE MenuItemID = ?";
-        try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+    @Override
+    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-            statement.setString(1, id);
-            return statement.executeUpdate() > 0;
+    @Override
+    public void update(FoodDto dto) throws SQLException, ClassNotFoundException {
 
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+    }
+
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+        ResultSet rst = SQLUtil.execute("DELETE FROM MenuItem WHERE MenuItemID = ?", id);
+    }
+
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    @Override
+    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
 }

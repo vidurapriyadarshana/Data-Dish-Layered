@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.TableViewDAO;
 import edu.ijse.datadish.dto.TableDto;
 import edu.ijse.datadish.db.DBConnection;
@@ -10,91 +11,59 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class TableViewDAOImpl implements TableViewDAO {
 
-    public ObservableList<TableDto> getAllTables() {
-        ObservableList<TableDto> tableList = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM tableinfo";
+    public ArrayList<TableDto> getAll() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo");
+        ArrayList<TableDto> tableList = new ArrayList<>();
 
-        try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String id = resultSet.getString("TableID");
-                String status = resultSet.getString("Status");
-                int capacity = resultSet.getInt("Capacity");
-
-                TableDto table = new TableDto(id, status, capacity);
-                tableList.add(table);
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        while (resultSet.next()) {
+            TableDto table = new TableDto(
+                    resultSet.getString("TableID"),
+                    resultSet.getString("Status"),
+                    resultSet.getInt("Capacity")
+            );
+            tableList.add(table);
         }
 
         return tableList;
     }
 
-    public ObservableList<TableDto> getAvailableTables() {
-        ObservableList<TableDto> tableList = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM tableinfo WHERE Status = 'Available'";
-
-        try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String id = resultSet.getString("TableID");
-                String status = resultSet.getString("Status");
-                int capacity = resultSet.getInt("Capacity");
-
-                TableDto table = new TableDto(id, status, capacity);
-                tableList.add(table);
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return tableList;
-    }
-
-    public boolean deleteTable(String tableId) {
-        String sql = "DELETE FROM tableinfo WHERE TableID = ?";
-
-        try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setString(1, tableId);
-            int affectedRows = statement.executeUpdate();
-
-            return affectedRows > 0;
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
+    @Override
+    public boolean save(TableDto dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
-    public boolean updateTableStatus(String tableId, String status) {
-        String sql = "UPDATE tableinfo SET Status = ? WHERE TableID = ?";
 
-        try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+    public ObservableList<TableDto> getAvailableTables() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo WHERE Status = 'Available'");
+        ObservableList<TableDto> tableList = FXCollections.observableArrayList();
+        return tableList;
+    }
 
-            statement.setString(1, status);
-            statement.setString(2, tableId);
-            int affectedRows = statement.executeUpdate();
+    public void delete(String tableId) throws SQLException, ClassNotFoundException {
+        SQLUtil.execute("DELETE FROM tableinfo WHERE TableID = ?", tableId);
+    }
 
-            return affectedRows > 0;
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
 
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public TableDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
+    }
 
+    public void update(TableDto tableDto) throws SQLException, ClassNotFoundException {
+
+        SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
+    }
+
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
         return false;
     }
 }

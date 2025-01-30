@@ -90,7 +90,7 @@ public class AddEmployeeSalaryController implements Initializable {
         lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         try {
-            chooseEmployee.getItems().addAll(AddEmployeeSalaryDAOImpl.getEmployeeNames()); // No changes required here
+            chooseEmployee.getItems().addAll(AddEmployeeSalaryDAOImpl.getEmployeeNames());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {

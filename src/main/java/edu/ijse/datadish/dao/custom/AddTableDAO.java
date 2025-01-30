@@ -1,13 +1,10 @@
 package edu.ijse.datadish.dao.custom;
 
-import edu.ijse.datadish.db.DBConnection;
+import edu.ijse.datadish.dao.CrudDAO;
+import edu.ijse.datadish.dto.TableDto;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface AddTableDAO {
-    String generateNextID();
-    boolean addNewTable(String id, String capacity) throws SQLException, ClassNotFoundException;
+public interface AddTableDAO extends CrudDAO<TableDto> {
+
 }

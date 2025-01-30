@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.EmployeeViewDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
@@ -11,16 +12,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class EmployeeViewDAOImpl implements EmployeeViewDAO {
 
-    public ObservableList<EmployeeDto> loadEmpTable() throws SQLException, ClassNotFoundException {
-        ObservableList<EmployeeDto> employeeView = FXCollections.observableArrayList();
+    public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<EmployeeDto> employeeList = new ArrayList<>();
 
-        String sql = "SELECT * FROM employee";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM employee");
 
         while (resultSet.next()) {
             String id = resultSet.getString("EmployeeID");
@@ -40,30 +39,49 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
             employeeDto.setEmployeeStatus(status);
             employeeDto.setAddress(address);
 
-            employeeView.add(employeeDto);
+            employeeList.add(employeeDto);
         }
-        return employeeView;
+
+        resultSet.close();
+
+        return employeeList;
     }
 
-    public boolean deleteEmployee(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE employee SET Status = 'Inactive' WHERE EmployeeID = ?;";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, employeeDto.getEmployeeID());
+    @Override
+    public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-        int result = statement.executeUpdate();
+    @Override
+    public void update(EmployeeDto dto) throws SQLException, ClassNotFoundException {
 
-        return result > 0;
+    }
+
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+        SQLUtil.execute("UPDATE employee SET Status = 'Inactive' WHERE EmployeeID = ?;",id);
+    }
+
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    @Override
+    public EmployeeDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
     public ObservableList<SalaryDto> loadSalaryTable() throws SQLException, ClassNotFoundException {
         ObservableList<SalaryDto> salaryView = FXCollections.observableArrayList();
 
-        String sql = "SELECT s.SalaryID, e.Name AS EmployeeName, s.PaymentDate, s.Amount FROM salary s JOIN employee e ON s.EmployeeID = e.EmployeeID";
-
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet = SQLUtil.execute(
+                "SELECT s.SalaryID, e.Name AS EmployeeName, s.PaymentDate, s.Amount FROM salary s JOIN employee e ON s.EmployeeID = e.EmployeeID"
+        );
 
         while (resultSet.next()) {
             String salaryId = resultSet.getString("SalaryID");
@@ -75,6 +93,9 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
             salaryView.add(salaryDto);
         }
 
+        resultSet.close();
+
         return salaryView;
     }
+
 }

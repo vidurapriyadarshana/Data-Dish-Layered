@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddInventoryItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
@@ -8,47 +9,87 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AddInventoryItemDAOImpl implements AddInventoryItemDAO {
 
-    public boolean addItem(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
-        String sql = "INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, inventoryDto.getId());
-        statement.setString(2, inventoryDto.getName());
-        statement.setInt(3, inventoryDto.getQty());
-        statement.setInt(4, inventoryDto.getStockLevel());
-
-        return statement.executeUpdate() > 0;
+    @Override
+    public ArrayList<InventoryDto> getAll() throws SQLException, ClassNotFoundException {
+        return null;
     }
 
-    public String generateNextID() {
-        String nextID = null;
+    public boolean save(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
+//        String sql = "INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);";
+//        Connection connection = DBConnection.getInstance().getConnection();
+//        PreparedStatement statement = connection.prepareStatement(sql);
+//
+//        statement.setString(1, inventoryDto.getId());
+//        statement.setString(2, inventoryDto.getName());
+//        statement.setInt(3, inventoryDto.getQty());
+//        statement.setInt(4, inventoryDto.getStockLevel());
+//
+//        return statement.executeUpdate() > 0;
 
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
+        return SQLUtil.execute("INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);", inventoryDto.getId(), inventoryDto.getName(), inventoryDto.getQty(), inventoryDto.getStockLevel());
+    }
 
-            String query = "SELECT InventoryID FROM inventory ORDER BY InventoryID DESC LIMIT 1";
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
+    @Override
+    public void update(InventoryDto dto) throws SQLException, ClassNotFoundException {
 
-            if (resultSet.next()) {
-                String lastID = resultSet.getString("InventoryID");
-                int number = Integer.parseInt(lastID.substring(1));
-                nextID = String.format("I%03d", number + 1);
-            } else {
-                nextID = "INV001";
-            }
+    }
 
-        } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-            e.printStackTrace();
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+
+    }
+
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+//        String nextID = null;
+//
+//        try {
+//            Connection connection = DBConnection.getInstance().getConnection();
+//
+//            String query = "SELECT InventoryID FROM inventory ORDER BY InventoryID DESC LIMIT 1";
+//            PreparedStatement statement = connection.prepareStatement(query);
+//            ResultSet resultSet = statement.executeQuery();
+//
+//            if (resultSet.next()) {
+//                String lastID = resultSet.getString("InventoryID");
+//                int number = Integer.parseInt(lastID.substring(1));
+//                nextID = String.format("I%03d", number + 1);
+//            } else {
+//                nextID = "INV001";
+//            }
+//
+//        } catch (SQLException e) {
+//            System.out.println("SQL Exception: " + e.getMessage());
+//        } catch (Exception e) {
+//            System.out.println("Exception: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return nextID;
+
+
+
+        ResultSet resultSet = SQLUtil.execute("SELECT InventoryID FROM inventory ORDER BY InventoryID DESC LIMIT 1");
+        if (resultSet.next()) {
+            String lastID = resultSet.getString("InventoryID");
+            int number = Integer.parseInt(lastID.substring(1));
+            return String.format("I%03d", number + 1);
+        } else {
+            return "INV001";
         }
-        return nextID;
+
+    }
+
+    @Override
+    public InventoryDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
 }

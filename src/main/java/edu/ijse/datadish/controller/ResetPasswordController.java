@@ -1,6 +1,7 @@
 package edu.ijse.datadish.controller;
 
 import edu.ijse.datadish.dao.custom.impl.LogInDAOImpl;
+import edu.ijse.datadish.dto.LogInDto;
 import edu.ijse.datadish.util.Refarance;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class ResetPasswordController implements Initializable {
@@ -31,7 +33,7 @@ public class ResetPasswordController implements Initializable {
     }
 
     @FXML
-    void resetPassword(ActionEvent event) {
+    void resetPassword(ActionEvent event) throws SQLException, ClassNotFoundException {
         String newPassword = txtNewPassword.getText();
         String confirmPassword = txtConfirmPassword.getText();
 
@@ -45,20 +47,7 @@ public class ResetPasswordController implements Initializable {
             return;
         }
 
-        try {
-            boolean isUpdated = logInDAOImpl.updatePassword(email, newPassword);
-
-            if (isUpdated) {
-                new Alert(Alert.AlertType.INFORMATION, "Password reset successfully!").show();
-                Stage stage = (Stage) txtNewPassword.getScene().getWindow();
-                stage.close();
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Failed to reset password!").show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Error occurred: " + e.getMessage()).show();
-        }
+        logInDAOImpl.update(new LogInDto(email, newPassword));
     }
 
     @Override

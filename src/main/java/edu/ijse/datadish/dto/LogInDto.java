@@ -15,4 +15,9 @@ public class LogInDto {
     private String password;
     private String email;
     private String role;
+
+    public LogInDto(String email,String password){
+        this.password = password;
+        this.email = email;
+    }
 }

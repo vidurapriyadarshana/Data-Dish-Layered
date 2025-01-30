@@ -1,5 +1,7 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import com.mysql.cj.protocol.Resultset;
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.EditFoodItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
@@ -12,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class EditFoodItemDAOImpl implements EditFoodItemDAO {
 
@@ -34,58 +37,55 @@ public class EditFoodItemDAOImpl implements EditFoodItemDAO {
         return destinationPath.toString();
     }
 
-    private String getFileExtension(String fileName) {
+    public String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
-    public boolean updateFoodItem(FoodDto foodDto) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE menuitem SET Name = ?, Price = ?, Category = ?, Availability = ? WHERE MenuItemID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
+    @Override
+    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
+        return null;
+    }
 
-        statement.setString(1, foodDto.getFoodName());
-        statement.setDouble(2, foodDto.getFoodPrice());
-        statement.setString(3, foodDto.getFoodCategory());
-        statement.setString(4, foodDto.getFoodAvailability());
-        statement.setString(5, foodDto.getFoodId());
+    @Override
+    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-        int rowsAffected = statement.executeUpdate();
+    public void update(FoodDto foodDto) throws SQLException, ClassNotFoundException {
+        SQLUtil.execute("UPDATE menuitem SET Name = ?, Price = ?, Category = ?, Availability = ? WHERE MenuItemID = ?",
+                foodDto.getFoodName(), foodDto.getFoodPrice(), foodDto.getFoodCategory(), foodDto.getFoodAvailability(), foodDto.getFoodId());
+    }
 
-        return rowsAffected > 0;
+    @Override
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+
+    }
+
+    @Override
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    @Override
+    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
     public boolean saveImagePath(String foodId, String imagePath) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE menuitem SET ImageData = ? WHERE MenuItemID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-
-        statement.setString(1, imagePath);
-        statement.setString(2, foodId);
-
-        int rowsAffected = statement.executeUpdate();
-
-        return rowsAffected > 0;
+        return SQLUtil.execute("UPDATE menuitem SET ImageData = ? WHERE MenuItemID = ?", imagePath, foodId);
     }
 
     public String getImagePath(String itemId) throws SQLException, ClassNotFoundException {
-        String query = "SELECT ImageData FROM menuitem WHERE MenuItemID = ?";
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet resultSet = SQLUtil.execute("SELECT ImageData FROM menuitem WHERE MenuItemID = ?", itemId);
 
-        preparedStatement.setString(1, itemId);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        String imagePath = null;
-        if (resultSet.next()) {
-            imagePath = resultSet.getString("ImageData");
-            foodDto.setFoodImagePath(imagePath);
+        if(resultSet.next()){
+            return resultSet.getString("ImageData");
         }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return imagePath;
+        return null;
     }
 }

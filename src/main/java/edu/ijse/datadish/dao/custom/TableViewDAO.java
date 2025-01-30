@@ -1,14 +1,11 @@
 package edu.ijse.datadish.dao.custom;
 
+import edu.ijse.datadish.dao.CrudDAO;
 import edu.ijse.datadish.dto.TableDto;
 import javafx.collections.ObservableList;
 
-public interface TableViewDAO {
-    ObservableList<TableDto> getAllTables();
+import java.sql.SQLException;
 
-    ObservableList<TableDto> getAvailableTables();
-
-    boolean deleteTable(String tableId);
-
-    boolean updateTableStatus(String tableId, String status);
+public interface TableViewDAO extends CrudDAO<TableDto> {
+    ObservableList<TableDto> getAvailableTables() throws SQLException, ClassNotFoundException;
 }

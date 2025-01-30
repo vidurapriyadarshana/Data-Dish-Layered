@@ -121,7 +121,7 @@ public class TableViewController implements Initializable {
 
     private void handleStatusToggle(TableDto tableDto, boolean isReserved) {
         String newStatus = isReserved ? "Reserved" : "Available";
-        boolean isUpdated = tableViewDAOImpl.updateTableStatus(tableDto.getId(), newStatus);
+        boolean isUpdated = tableViewDAOImpl.update(new TableDto(tableDto.getId(), newStatus));
 
         if (isUpdated) {
             tableDto.setStatus(newStatus);
