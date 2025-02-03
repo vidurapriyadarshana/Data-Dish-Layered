@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.TableViewDAO;
 import edu.ijse.datadish.dto.TableDto;
 import edu.ijse.datadish.db.DBConnection;
+import edu.ijse.datadish.entity.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,12 +16,12 @@ import java.util.ArrayList;
 
 public class TableViewDAOImpl implements TableViewDAO {
 
-    public ArrayList<TableDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Table> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo");
-        ArrayList<TableDto> tableList = new ArrayList<>();
+        ArrayList<Table> tableList = new ArrayList<>();
 
         while (resultSet.next()) {
-            TableDto table = new TableDto(
+            Table table = new Table(
                     resultSet.getString("TableID"),
                     resultSet.getString("Status"),
                     resultSet.getInt("Capacity")
@@ -32,14 +33,14 @@ public class TableViewDAOImpl implements TableViewDAO {
     }
 
     @Override
-    public boolean save(TableDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Table dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
 
-    public ObservableList<TableDto> getAvailableTables() throws SQLException, ClassNotFoundException {
+    public ObservableList<Table> getAvailableTables() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo WHERE Status = 'Available'");
-        ObservableList<TableDto> tableList = FXCollections.observableArrayList();
+        ObservableList<Table> tableList = FXCollections.observableArrayList();
         return tableList;
     }
 
@@ -53,11 +54,11 @@ public class TableViewDAOImpl implements TableViewDAO {
     }
 
     @Override
-    public TableDto search(String id) throws SQLException, ClassNotFoundException {
+    public Table search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public void update(TableDto tableDto) throws SQLException, ClassNotFoundException {
+    public void update(Table tableDto) throws SQLException, ClassNotFoundException {
 
         SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
     }

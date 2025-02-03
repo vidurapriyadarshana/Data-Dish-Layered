@@ -1,6 +1,7 @@
 package edu.ijse.datadish.bo.custom.impl;
 
 import edu.ijse.datadish.bo.custom.HomePageBO;
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.dto.OrderItemDto;
@@ -92,51 +93,30 @@ public class HomePageBOImpl implements HomePageBO {
         String nextOrderID = "O001";
         String nextCustomerID = "C001";
 
-        try (Connection connection = DBConnection.getInstance().getConnection()) {
-            connection.setAutoCommit(false); // Start transaction
-
-            try (PreparedStatement orderStatement = connection.prepareStatement(
-                    "SELECT OrderID FROM orders ORDER BY OrderID DESC LIMIT 1");
-                 ResultSet orderResultSet = orderStatement.executeQuery()) {
-
-                if (orderResultSet.next()) {
-                    String lastOrderID = orderResultSet.getString("OrderID");
-                    if (lastOrderID != null && !lastOrderID.isEmpty()) {
-                        int number = Integer.parseInt(lastOrderID.substring(1));
-                        nextOrderID = String.format("O%03d", number + 1);
-                    }
+        try {
+            ResultSet orderID = SQLUtil.execute("SELECT OrderID FROM orders ORDER BY OrderID DESC LIMIT 1");
+            if (orderID.next()) {
+                String lastOrderID = orderID.getString("OrderID");
+                if (lastOrderID != null && !lastOrderID.isEmpty()) {
+                    int number = Integer.parseInt(lastOrderID.substring(1));
+                    nextOrderID = String.format("O%03d", number + 1);
                 }
             }
 
-            try (PreparedStatement customerStatement = connection.prepareStatement(
-                    "SELECT CustomerID FROM customer ORDER BY CustomerID DESC LIMIT 1");
-                 ResultSet customerResultSet = customerStatement.executeQuery()) {
-
-                if (customerResultSet.next()) {
-                    String lastCustomerID = customerResultSet.getString("CustomerID");
-                    if (lastCustomerID != null && !lastCustomerID.isEmpty()) {
-                        int number = Integer.parseInt(lastCustomerID.substring(1));
-                        nextCustomerID = String.format("C%03d", number + 1);
-                    }
+            ResultSet customerID = SQLUtil.execute("SELECT CustomerID FROM customer ORDER BY CustomerID DESC LIMIT 1");
+            if (customerID.next()) {
+                String lastCustomerID = customerID.getString("CustomerID");
+                if (lastCustomerID != null && !lastCustomerID.isEmpty()) {
+                    int number = Integer.parseInt(lastCustomerID.substring(1));
+                    nextCustomerID = String.format("C%03d", number + 1);
                 }
             }
 
-            connection.commit();
         } catch (SQLException | ClassNotFoundException e) {
-            try {
-                DBConnection.getInstance().getConnection().rollback();
-            } catch (SQLException | ClassNotFoundException rollbackEx) {
-                System.out.println("Rollback failed: " + rollbackEx.getMessage());
-            }
             System.out.println("SQL Exception: " + e.getMessage());
-        } finally {
-            try {
-                DBConnection.getInstance().getConnection().setAutoCommit(true);
-            } catch (SQLException | ClassNotFoundException resetEx) {
-                System.out.println("Auto-commit reset failed: " + resetEx.getMessage());
-            }
         }
 
         return new String[]{nextOrderID, nextCustomerID};
     }
+
 }

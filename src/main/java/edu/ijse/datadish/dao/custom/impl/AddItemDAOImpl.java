@@ -5,6 +5,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
+import edu.ijse.datadish.entity.Food;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,8 +17,8 @@ import java.util.ArrayList;
 
 public class AddItemDAOImpl implements AddItemDAO {
 
-    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<FoodDto> foodItems = new ArrayList<>();
+    public ArrayList<Food> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Food> foodItems = new ArrayList<>();
 
         ResultSet rst = SQLUtil.execute("SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem");
 
@@ -29,7 +30,7 @@ public class AddItemDAOImpl implements AddItemDAO {
                 String category = rst.getString("Category");
                 String availability = rst.getString("Availability");
 
-                FoodDto foodDto = new FoodDto(id, name, price, category, availability, null);
+                Food foodDto = new Food(id, name, price, category, availability, null);
                 foodItems.add(foodDto);
             }
         }
@@ -38,12 +39,12 @@ public class AddItemDAOImpl implements AddItemDAO {
     }
 
     @Override
-    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Food dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
     @Override
-    public void update(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Food dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -62,7 +63,7 @@ public class AddItemDAOImpl implements AddItemDAO {
     }
 
     @Override
-    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+    public Food search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

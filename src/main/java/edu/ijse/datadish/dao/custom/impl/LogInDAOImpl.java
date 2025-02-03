@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.LoginDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.LogInDto;
+import edu.ijse.datadish.entity.LogIn;
 import edu.ijse.datadish.util.Refarance;
 
 import java.sql.Connection;
@@ -29,21 +30,21 @@ public class LogInDAOImpl implements LoginDAO {
     }
 
     @Override
-    public LogInDto search(String id) throws SQLException, ClassNotFoundException {
+    public LogIn search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public ArrayList<LogInDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<LogIn> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public boolean save(LogInDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(LogIn dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
-    public void update(LogInDto logInDto) throws SQLException, ClassNotFoundException {
+    public void update(LogIn logInDto) throws SQLException, ClassNotFoundException {
         SQLUtil.execute("UPDATE user SET Password = ? WHERE Email = ?", logInDto.getEmail(), logInDto.getPassword());
     }
 

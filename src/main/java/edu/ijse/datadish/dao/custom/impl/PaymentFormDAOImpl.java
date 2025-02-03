@@ -7,6 +7,7 @@ import edu.ijse.datadish.dto.NotificationDto;
 import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.dto.OrderItemDto;
 import edu.ijse.datadish.dto.PaymentDto;
+import edu.ijse.datadish.entity.Notification;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,11 +19,11 @@ import java.util.List;
 public class PaymentFormDAOImpl implements PaymentFormDAO {
 
     @Override
-    public ArrayList<NotificationDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Notification> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public boolean save(NotificationDto notificationDto) throws SQLException, ClassNotFoundException {
+    public boolean save(Notification notificationDto) throws SQLException, ClassNotFoundException {
 
         return SQLUtil.execute("INSERT INTO notification (NotificationID, Description, Date , CustomerID) VALUES (?, ?, ?, ?)",
                 notificationDto.getNotificationId(),
@@ -33,7 +34,7 @@ public class PaymentFormDAOImpl implements PaymentFormDAO {
     }
 
     @Override
-    public void update(NotificationDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Notification dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -53,7 +54,7 @@ public class PaymentFormDAOImpl implements PaymentFormDAO {
     }
 
     @Override
-    public NotificationDto search(String id) throws SQLException, ClassNotFoundException {
+    public Notification search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

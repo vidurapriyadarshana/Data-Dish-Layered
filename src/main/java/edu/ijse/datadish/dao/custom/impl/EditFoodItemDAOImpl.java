@@ -5,6 +5,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.EditFoodItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
+import edu.ijse.datadish.entity.Food;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,16 +43,16 @@ public class EditFoodItemDAOImpl implements EditFoodItemDAO {
     }
 
     @Override
-    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Food> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Food dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
-    public void update(FoodDto foodDto) throws SQLException, ClassNotFoundException {
+    public void update(Food foodDto) throws SQLException, ClassNotFoundException {
         SQLUtil.execute("UPDATE menuitem SET Name = ?, Price = ?, Category = ?, Availability = ? WHERE MenuItemID = ?",
                 foodDto.getFoodName(), foodDto.getFoodPrice(), foodDto.getFoodCategory(), foodDto.getFoodAvailability(), foodDto.getFoodId());
     }
@@ -72,7 +73,7 @@ public class EditFoodItemDAOImpl implements EditFoodItemDAO {
     }
 
     @Override
-    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+    public Food search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

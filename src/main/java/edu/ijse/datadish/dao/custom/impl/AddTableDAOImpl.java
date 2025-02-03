@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddTableDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.TableDto;
+import edu.ijse.datadish.entity.Table;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,21 +27,21 @@ public class AddTableDAOImpl implements AddTableDAO {
     }
 
     @Override
-    public TableDto search(String id) throws SQLException, ClassNotFoundException {
+    public Table search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public ArrayList<TableDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Table> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public boolean save(TableDto tableDto) throws SQLException, ClassNotFoundException {
+    public boolean save(Table tableDto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO tableinfo (TableID, Capacity , Status) VALUES (?, ? ,?)", tableDto.getId(), String.valueOf(tableDto.getCapacity()), "Available");
     }
 
     @Override
-    public void update(TableDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Table dto) throws SQLException, ClassNotFoundException {
 
     }
 

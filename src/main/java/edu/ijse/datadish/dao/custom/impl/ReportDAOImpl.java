@@ -42,39 +42,39 @@ public class ReportDAOImpl implements ReportDAO {
             default: return "Unknown";
         }
     }
-
-    @Override
-    public ArrayList getAll() throws SQLException, ClassNotFoundException {
-        return null;
-    }
-
-    @Override
-    public boolean save(Object dto) throws SQLException, ClassNotFoundException {
-        return false;
-    }
-
-    @Override
-    public void update(Object dto) throws SQLException, ClassNotFoundException {
-
-    }
-
-    @Override
-    public boolean exist(String id) throws SQLException, ClassNotFoundException {
-        return false;
-    }
-
-    @Override
-    public void delete(String id) throws SQLException, ClassNotFoundException {
-
-    }
-
-    @Override
-    public String generateNewId() throws SQLException, ClassNotFoundException {
-        return "";
-    }
-
-    @Override
-    public Object search(String id) throws SQLException, ClassNotFoundException {
-        return null;
-    }
+//
+//    @Override
+//    public ArrayList getAll() throws SQLException, ClassNotFoundException {
+//        return null;
+//    }
+//
+//    @Override
+//    public boolean save(Object dto) throws SQLException, ClassNotFoundException {
+//        return false;
+//    }
+//
+//    @Override
+//    public void update(Object dto) throws SQLException, ClassNotFoundException {
+//
+//    }
+//
+//    @Override
+//    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+//        return false;
+//    }
+//
+//    @Override
+//    public void delete(String id) throws SQLException, ClassNotFoundException {
+//
+//    }
+//
+//    @Override
+//    public String generateNewId() throws SQLException, ClassNotFoundException {
+//        return "";
+//    }
+//
+//    @Override
+//    public Object search(String id) throws SQLException, ClassNotFoundException {
+//        return null;
+//    }
 }

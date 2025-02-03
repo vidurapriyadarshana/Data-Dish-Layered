@@ -5,6 +5,8 @@ import edu.ijse.datadish.dao.custom.EmployeeViewDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
+import edu.ijse.datadish.entity.Employee;
+import edu.ijse.datadish.entity.Salary;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,8 +18,8 @@ import java.util.ArrayList;
 
 public class EmployeeViewDAOImpl implements EmployeeViewDAO {
 
-    public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<EmployeeDto> employeeList = new ArrayList<>();
+    public ArrayList<Employee> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Employee> employeeList = new ArrayList<>();
 
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM employee");
 
@@ -30,7 +32,7 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
             String status = resultSet.getString("Status");
             String address = resultSet.getString("Address");
 
-            EmployeeDto employeeDto = new EmployeeDto();
+            Employee employeeDto = new Employee();
             employeeDto.setEmployeeID(id);
             employeeDto.setEmployeeName(name);
             employeeDto.setEmployeeContact(contact);
@@ -48,12 +50,12 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
     }
 
     @Override
-    public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Employee dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
     @Override
-    public void update(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Employee dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -72,12 +74,12 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
     }
 
     @Override
-    public EmployeeDto search(String id) throws SQLException, ClassNotFoundException {
+    public Employee search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public ObservableList<SalaryDto> loadSalaryTable() throws SQLException, ClassNotFoundException {
-        ObservableList<SalaryDto> salaryView = FXCollections.observableArrayList();
+    public ObservableList<Salary> loadSalaryTable() throws SQLException, ClassNotFoundException {
+        ObservableList<Salary> salaryView = FXCollections.observableArrayList();
 
         ResultSet resultSet = SQLUtil.execute(
                 "SELECT s.SalaryID, e.Name AS EmployeeName, s.PaymentDate, s.Amount FROM salary s JOIN employee e ON s.EmployeeID = e.EmployeeID"
@@ -89,7 +91,7 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
             String paymentDate = resultSet.getString("PaymentDate");
             double amount = resultSet.getDouble("Amount");
 
-            SalaryDto salaryDto = new SalaryDto(salaryId, employeeName, paymentDate, amount);
+            Salary salaryDto = new Salary(salaryId, employeeName, paymentDate, amount);
             salaryView.add(salaryDto);
         }
 

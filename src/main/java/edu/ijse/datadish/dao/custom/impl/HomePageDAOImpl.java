@@ -6,6 +6,7 @@ import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.dto.OrderItemDto;
+import edu.ijse.datadish.entity.Food;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,13 +14,13 @@ import java.util.List;
 
 public class HomePageDAOImpl implements HomePageDAO {
 
-    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<FoodDto> foodItems = new ArrayList<>();
+    public ArrayList<Food> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Food> foodItems = new ArrayList<>();
 
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM menuitem");
 
         while (resultSet.next()) {
-            FoodDto foodItem = new FoodDto(
+            Food foodItem = new Food(
                     resultSet.getString("MenuItemID"),
                     resultSet.getString("Name"),
                     resultSet.getDouble("Price"),
@@ -36,12 +37,12 @@ public class HomePageDAOImpl implements HomePageDAO {
     }
 
     @Override
-    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Food dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
     @Override
-    public void update(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Food dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -61,7 +62,7 @@ public class HomePageDAOImpl implements HomePageDAO {
     }
 
     @Override
-    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+    public Food search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 }

@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddInventoryItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
+import edu.ijse.datadish.entity.Inventory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,27 +15,16 @@ import java.util.ArrayList;
 public class AddInventoryItemDAOImpl implements AddInventoryItemDAO {
 
     @Override
-    public ArrayList<InventoryDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Inventory> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public boolean save(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
-//        String sql = "INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);";
-//        Connection connection = DBConnection.getInstance().getConnection();
-//        PreparedStatement statement = connection.prepareStatement(sql);
-//
-//        statement.setString(1, inventoryDto.getId());
-//        statement.setString(2, inventoryDto.getName());
-//        statement.setInt(3, inventoryDto.getQty());
-//        statement.setInt(4, inventoryDto.getStockLevel());
-//
-//        return statement.executeUpdate() > 0;
-
+    public boolean save(Inventory inventoryDto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO inventory (InventoryID, ItemName, Qty, StockLevel) VALUES (?,?,?,?);", inventoryDto.getId(), inventoryDto.getName(), inventoryDto.getQty(), inventoryDto.getStockLevel());
     }
 
     @Override
-    public void update(InventoryDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Inventory dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -88,7 +78,7 @@ public class AddInventoryItemDAOImpl implements AddInventoryItemDAO {
     }
 
     @Override
-    public InventoryDto search(String id) throws SQLException, ClassNotFoundException {
+    public Inventory search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

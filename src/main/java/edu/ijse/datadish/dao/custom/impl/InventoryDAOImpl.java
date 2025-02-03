@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.InventoryDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.InventoryDto;
+import edu.ijse.datadish.entity.Inventory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,13 +16,13 @@ import java.util.ArrayList;
 
 public class InventoryDAOImpl implements InventoryDAO {
 
-    public ArrayList<InventoryDto> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<InventoryDto> itemList = new ArrayList<>();
+    public ArrayList<Inventory> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Inventory> itemList = new ArrayList<>();
 
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM inventory");
 
         while (resultSet.next()) {
-            itemList.add(new InventoryDto(
+            itemList.add(new Inventory(
                     resultSet.getString("InventoryID"),
                     resultSet.getString("ItemName"),
                     resultSet.getInt("Qty"),
@@ -32,12 +33,12 @@ public class InventoryDAOImpl implements InventoryDAO {
     }
 
     @Override
-    public boolean save(InventoryDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Inventory dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
     @Override
-    public void update(InventoryDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Inventory dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -56,7 +57,7 @@ public class InventoryDAOImpl implements InventoryDAO {
     }
 
     @Override
-    public InventoryDto search(String id) throws SQLException, ClassNotFoundException {
+    public Inventory search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 }

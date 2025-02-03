@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddFoodItemDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.FoodDto;
+import edu.ijse.datadish.entity.Food;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +31,11 @@ public class AddFoodItemDAOImpl implements AddFoodItemDAO {
     }
 
     @Override
-    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Food> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public boolean save(FoodDto foodDto) throws SQLException, ClassNotFoundException {
+    public boolean save(Food foodDto) throws SQLException, ClassNotFoundException {
 //        String sql = "INSERT INTO MenuItem (MenuItemID, Name, Price, Category, Availability, ImageData) VALUES (?,?,?,?,?,?)";
 //
 //        try (Connection connection = DBConnection.getInstance().getConnection();
@@ -55,7 +56,7 @@ public class AddFoodItemDAOImpl implements AddFoodItemDAO {
     }
 
     @Override
-    public void update(FoodDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Food dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -70,30 +71,6 @@ public class AddFoodItemDAOImpl implements AddFoodItemDAO {
     }
 
     public String generateNewId() throws SQLException, ClassNotFoundException {
-//        String nextID = null;
-//
-//        try {
-//            Connection connection = DBConnection.getInstance().getConnection();
-//
-//            String query = "SELECT MenuItemID FROM MenuItem ORDER BY MenuItemID DESC LIMIT 1";
-//            PreparedStatement statement = connection.prepareStatement(query);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            if (resultSet.next()) {
-//                String lastID = resultSet.getString("MenuItemID");
-//                int number = Integer.parseInt(lastID.substring(1));
-//                nextID = String.format("M%03d", number + 1);
-//            } else {
-//                nextID = "M001";
-//            }
-//
-//        } catch (SQLException e) {
-//            System.out.println("SQL Exception: " + e.getMessage());
-//        } catch (Exception e) {
-//            System.out.println("Exception: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return nextID;
 
         ResultSet rst = SQLUtil.execute("SELECT MenuItemID FROM MenuItem ORDER BY MenuItemID DESC LIMIT 1");
         if (rst.next()) {
@@ -106,7 +83,7 @@ public class AddFoodItemDAOImpl implements AddFoodItemDAO {
     }
 
     @Override
-    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+    public Food search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 

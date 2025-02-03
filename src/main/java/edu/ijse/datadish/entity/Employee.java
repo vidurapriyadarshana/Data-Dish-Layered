@@ -21,4 +21,8 @@ public class Employee {
     private String email;
     private String role;
     private String password;
+
+    public Employee(String name) {
+        this.employeeName = name;
+    }
 }

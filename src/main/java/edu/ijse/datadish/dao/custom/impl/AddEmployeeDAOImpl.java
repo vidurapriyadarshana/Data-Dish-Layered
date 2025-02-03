@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddEmployeeDAO;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
+import edu.ijse.datadish.entity.Employee;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,17 +15,18 @@ import java.util.ArrayList;
 public class AddEmployeeDAOImpl implements AddEmployeeDAO {
 
     @Override
-    public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
+    public ArrayList<Employee> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
-        return false;
+    public boolean save(Employee dto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO employee (EmployeeID, Name, Contact, HireDate, Status, Address, Email, UserName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                dto.getEmployeeID(), dto.getEmployeeName(), dto.getEmployeeContact(), dto.getHireDate(), dto.getEmployeeStatus(), dto.getAddress(), dto.getEmail(), dto.getUserName());
     }
 
     @Override
-    public void update(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+    public void update(Employee dto) throws SQLException, ClassNotFoundException {
 
     }
 
@@ -51,9 +53,14 @@ public class AddEmployeeDAOImpl implements AddEmployeeDAO {
     }
 
     @Override
-    public EmployeeDto search(String id) throws SQLException, ClassNotFoundException {
+    public Employee search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
 
 
+    @Override
+    public boolean addTOUser(Employee employeeDto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO user (UserName, Password, Email, Role) VALUES (?, ?, ?, ?)",
+                employeeDto.getUserName(), employeeDto.getPassword(), employeeDto.getEmail(), employeeDto.getRole());
+    }
 }
