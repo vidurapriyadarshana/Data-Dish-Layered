@@ -5,6 +5,7 @@ import edu.ijse.datadish.dao.custom.AddEmployeeSalaryDAO;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
 import edu.ijse.datadish.entity.Employee;
+import edu.ijse.datadish.entity.Salary;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,7 +72,7 @@ public class AddEmployeeSalaryDAOImpl implements AddEmployeeSalaryDAO {
         return null;
     }
 
-    public boolean save(SalaryDto salaryDto) throws SQLException, ClassNotFoundException {
+    public boolean save(Salary salaryDto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO salary (SalaryID, EmployeeID,Amount, PaymentDate) VALUES (?, ?, ?, ?)",
                 salaryDto.getSalaryId(), salaryDto.getEmployeeId(), salaryDto.getAmount(), salaryDto.getDate());
     }

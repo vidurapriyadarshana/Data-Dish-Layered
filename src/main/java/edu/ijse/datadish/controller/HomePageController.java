@@ -1,9 +1,6 @@
 package edu.ijse.datadish.controller;
 
-import edu.ijse.datadish.dto.FoodDto;
-import edu.ijse.datadish.dto.OrderDto;
-import edu.ijse.datadish.dto.TableDto;
-import edu.ijse.datadish.dto.OrderItemDto;
+import edu.ijse.datadish.dto.*;
 import edu.ijse.datadish.dao.custom.impl.HomePageDAOImpl;
 import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
 import edu.ijse.datadish.util.Refarance;
@@ -197,7 +194,15 @@ public class HomePageController implements Initializable {
         order.setCustomerName(customerName);
         order.setCustomerContact(customerContact);
 
-        boolean isOrderSaved = HomePageDAOImpl.saveOrder(orderItems, order);
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setCustomerID(customerId);
+        customerDTO.setName(customerName);
+        customerDTO.setContact(customerContact);
+
+        TableDto table = new TableDto();
+        table.setId(selectedTable);
+
+        boolean isOrderSaved = HomePageDAOImpl.save(orderItems, order, customerDTO,table);
         if (isOrderSaved) {
             System.out.println("Order saved successfully!");
             resetForm();

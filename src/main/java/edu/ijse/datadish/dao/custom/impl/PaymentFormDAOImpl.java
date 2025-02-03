@@ -24,7 +24,6 @@ public class PaymentFormDAOImpl implements PaymentFormDAO {
     }
 
     public boolean save(Notification notificationDto) throws SQLException, ClassNotFoundException {
-
         return SQLUtil.execute("INSERT INTO notification (NotificationID, Description, Date , CustomerID) VALUES (?, ?, ?, ?)",
                 notificationDto.getNotificationId(),
                 notificationDto.getDesc(),
@@ -57,5 +56,7 @@ public class PaymentFormDAOImpl implements PaymentFormDAO {
     public Notification search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
+
+
 
 }

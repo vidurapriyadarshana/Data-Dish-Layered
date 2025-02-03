@@ -30,7 +30,11 @@ public class DAOFactory {
         QUERY,
         REPORT,
         TABLE_VIEW,
-        UPDATE_EMPLOYEE;
+        UPDATE_EMPLOYEE,
+        CUSTOMER,
+        ORDER,
+        MENU,
+        PAYMENT;
     }
 
     public SuperDAO getDAO(DAOTypes daoTypes) {
@@ -69,6 +73,14 @@ public class DAOFactory {
                 return new TableViewDAOImpl();
             case UPDATE_EMPLOYEE:
                 return new UpdateEmployeeDAOImpl();
+            case CUSTOMER:
+                return new CustomerDAOImpl();
+            case ORDER:
+                return new OrderDAOImpl();
+            case MENU:
+                return new MenuDAOImpl();
+            case PAYMENT:
+                return new PaymentDAOImpl();
             default:
                 return null;
         }

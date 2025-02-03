@@ -100,4 +100,14 @@ public class EmployeeViewDAOImpl implements EmployeeViewDAO {
         return salaryView;
     }
 
+    @Override
+    public boolean getEmployeeID(String userName) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("SELECT EmployeeID FROM employee WHERE UserName = ?" , userName);
+    }
+
+    @Override
+    public boolean getUserInfo(String userName) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("SELECT * FROM user WHERE UserName = ?", userName);
+    }
+
 }

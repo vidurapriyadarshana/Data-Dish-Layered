@@ -81,5 +81,4 @@ public class AddInventoryItemDAOImpl implements AddInventoryItemDAO {
     public Inventory search(String id) throws SQLException, ClassNotFoundException {
         return null;
     }
-
 }

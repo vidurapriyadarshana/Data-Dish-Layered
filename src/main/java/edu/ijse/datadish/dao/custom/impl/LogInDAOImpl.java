@@ -48,4 +48,6 @@ public class LogInDAOImpl implements LoginDAO {
         SQLUtil.execute("UPDATE user SET Password = ? WHERE Email = ?", logInDto.getEmail(), logInDto.getPassword());
     }
 
+
+
 }

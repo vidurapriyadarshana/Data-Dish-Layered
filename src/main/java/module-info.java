@@ -8,6 +8,7 @@ module edu.ijse.restaurant {
     requires net.sf.jasperreports.core;
     requires java.mail;
     requires jbcrypt;
+    requires modelmapper;
 
 
     opens edu.ijse.datadish.controller to javafx.fxml;

@@ -1,122 +1,119 @@
 package edu.ijse.datadish.bo.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.bo.custom.HomePageBO;
+import edu.ijse.datadish.dao.DAOFactory;
 import edu.ijse.datadish.dao.SQLUtil;
+import edu.ijse.datadish.dao.custom.impl.CustomerDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.MenuDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.OrderDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
 import edu.ijse.datadish.db.DBConnection;
-import edu.ijse.datadish.dto.OrderDto;
-import edu.ijse.datadish.dto.OrderItemDto;
+import edu.ijse.datadish.dto.*;
+import edu.ijse.datadish.entity.*;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomePageBOImpl implements HomePageBO {
-    public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
 
-        String customer = "INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)";
-        String orders = "INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)";
-        String menuOrderItem = "INSERT INTO menuorderitem(MenuItemID, OrderID, Qty) VALUES (?,?,?)";
-        String tableInfo = "UPDATE tableinfo SET Status = 'Reserved' WHERE TableID = ?";
+    CustomerDAOImpl customerDAOImpl = (CustomerDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.CUSTOMER);
+    OrderDAOImpl orderDAOImpl = (OrderDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.ORDER);
+    MenuDAOImpl menuDAOIMPL = (MenuDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.MENU);
+    TableViewDAOImpl tableViewDAOImpl = (TableViewDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.TABLE_VIEW);
+
+    public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, CustomerDTO customerDto, TableDto tableDto) throws SQLException, ClassNotFoundException {
 
         Connection connection = null;
-        PreparedStatement customerStatement = null;
-        PreparedStatement ordersStatement = null;
-        PreparedStatement menuOrderItemStatement = null;
-        PreparedStatement tableInfoStatement = null;
 
         try {
             connection = DBConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
 
-            customerStatement = connection.prepareStatement(customer);
-            customerStatement.setString(1, orderDto.getCustomerId());
-            customerStatement.setString(2, orderDto.getCustomerName());
-            customerStatement.setString(3, orderDto.getCustomerContact());
-            int customerRowsInserted = customerStatement.executeUpdate();
+            Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
+            Order order = DTOConverter.toEntity(orderDto, Order.class);
+            Table table = DTOConverter.toEntity(tableDto, Table.class);
+            table.setStatus("Reserved");
 
-            if (customerRowsInserted <= 0) {
+            if (!customerDAOImpl.save(customer)) {
                 connection.rollback();
                 return false;
             }
 
-            ordersStatement = connection.prepareStatement(orders);
-            ordersStatement.setString(1, orderDto.getOrderId());
-            ordersStatement.setString(2, orderDto.getCustomerId());
-            ordersStatement.setString(3, orderDto.getTableId());
-            ordersStatement.setDate(4, Date.valueOf(orderDto.getOrderDate()));
-            ordersStatement.setString(5, orderDto.getTotalAmount());
-            ordersStatement.setString(6, orderDto.getEmployeeId());
-            int orderRowsInserted = ordersStatement.executeUpdate();
-
-            if (orderRowsInserted <= 0) {
+            if (!orderDAOImpl.save(order)) {
                 connection.rollback();
                 return false;
             }
 
-            menuOrderItemStatement = connection.prepareStatement(menuOrderItem);
             for (OrderItemDto item : orderItemsDto) {
-                menuOrderItemStatement.setString(1, item.getFoodId());
-                menuOrderItemStatement.setString(2, orderDto.getOrderId());
-                menuOrderItemStatement.setInt(3, item.getQuantity());
-                int itemRowsInserted = menuOrderItemStatement.executeUpdate();
+                Order orderEntity = DTOConverter.toEntity(item, Order.class);
+                OrderItem orderItem = DTOConverter.toEntity(item, OrderItem.class);
 
-                if (itemRowsInserted <= 0) {
+                boolean menuAdded = menuDAOIMPL.save(orderItem, orderEntity);
+                if (!menuAdded) {
                     connection.rollback();
                     return false;
                 }
             }
 
-            tableInfoStatement = connection.prepareStatement(tableInfo);
-            tableInfoStatement.setString(1, orderDto.getTableId());
-            int tableInfoRowsInserted = tableInfoStatement.executeUpdate();
-
-            if (tableInfoRowsInserted <= 0) {
+            if (!tableViewDAOImpl.save(table)) {
                 connection.rollback();
                 return false;
             }
 
             connection.commit();
             return true;
+
         } catch (SQLException e) {
             if (connection != null) {
                 connection.rollback();
             }
             throw e;
         } finally {
-            if (customerStatement != null) customerStatement.close();
-            if (ordersStatement != null) ordersStatement.close();
-            if (menuOrderItemStatement != null) menuOrderItemStatement.close();
-            if (connection != null) connection.setAutoCommit(true);
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
         }
     }
 
-    public String[] generateNewIdsAsTransaction() {
-        String nextOrderID = "O001";
-        String nextCustomerID = "C001";
+    public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
 
-        try {
-            ResultSet orderID = SQLUtil.execute("SELECT OrderID FROM orders ORDER BY OrderID DESC LIMIT 1");
-            if (orderID.next()) {
-                String lastOrderID = orderID.getString("OrderID");
-                if (lastOrderID != null && !lastOrderID.isEmpty()) {
-                    int number = Integer.parseInt(lastOrderID.substring(1));
-                    nextOrderID = String.format("O%03d", number + 1);
-                }
-            }
+    public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Food> foodList = menuDAOIMPL.getAll();
+        ArrayList<FoodDto> foodDtoList = new ArrayList<>();
 
-            ResultSet customerID = SQLUtil.execute("SELECT CustomerID FROM customer ORDER BY CustomerID DESC LIMIT 1");
-            if (customerID.next()) {
-                String lastCustomerID = customerID.getString("CustomerID");
-                if (lastCustomerID != null && !lastCustomerID.isEmpty()) {
-                    int number = Integer.parseInt(lastCustomerID.substring(1));
-                    nextCustomerID = String.format("C%03d", number + 1);
-                }
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+        for (Food food : foodList) {
+            foodDtoList.add(DTOConverter.toDTO(food, FoodDto.class));
         }
 
-        return new String[]{nextOrderID, nextCustomerID};
+        return foodDtoList;
+    }
+
+    public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    public void update(FoodDto dto) throws SQLException, ClassNotFoundException {
+
+    }
+
+    public boolean exist(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    public void delete(String id) throws SQLException, ClassNotFoundException {
+
+    }
+
+    public String generateNewId() throws SQLException, ClassNotFoundException {
+        return "";
+    }
+
+    public FoodDto search(String id) throws SQLException, ClassNotFoundException {
+        return null;
     }
 
 }

@@ -59,12 +59,17 @@ public class TableViewDAOImpl implements TableViewDAO {
     }
 
     public void update(Table tableDto) throws SQLException, ClassNotFoundException {
-
         SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
+    }
+
+    public boolean updateTrnsaction(Table tableDto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
     }
 
     @Override
     public boolean exist(String id) throws SQLException, ClassNotFoundException {
         return false;
     }
+
+
 }

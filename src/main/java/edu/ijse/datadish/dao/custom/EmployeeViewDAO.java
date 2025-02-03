@@ -11,4 +11,6 @@ import java.sql.SQLException;
 
 public interface EmployeeViewDAO extends CrudDAO<Employee> {
     ObservableList<Salary> loadSalaryTable() throws SQLException, ClassNotFoundException;
+    boolean getEmployeeID(String userName) throws SQLException, ClassNotFoundException;
+    boolean getUserInfo(String userName) throws SQLException, ClassNotFoundException;
 }

@@ -1,10 +1,20 @@
 package edu.ijse.datadish.bo.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.bo.custom.PaymentFormBo;
+import edu.ijse.datadish.dao.DAOFactory;
+import edu.ijse.datadish.dao.custom.impl.MenuDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.PaymentDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.QuoryDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.dto.OrderItemDto;
 import edu.ijse.datadish.dto.PaymentDto;
+import edu.ijse.datadish.entity.Order;
+import edu.ijse.datadish.entity.OrderItem;
+import edu.ijse.datadish.entity.Payment;
+import edu.ijse.datadish.entity.Table;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,153 +24,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentFormBOImpl implements PaymentFormBo {
+
+    QuoryDAOImpl quoryDAO = (QuoryDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.QUERY);
+    TableViewDAOImpl tableViewDAO = (TableViewDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.TABLE_VIEW);
+    MenuDAOImpl menuDAO = (MenuDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.MENU);
+    PaymentDAOImpl paymentDAO = (PaymentDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT);
+
     public List<OrderItemDto> getItemDetails(String orderId) throws SQLException, ClassNotFoundException {
+        List<OrderItem> orderItem = quoryDAO.getItemDetails(orderId);
+
         List<OrderItemDto> orderItemDto = new ArrayList<>();
-
-        String sql = "SELECT\n" +
-                "    moi.MenuItemID,\n" +
-                "    SUM(moi.Qty) AS TotalQty,\n" +
-                "    mi.Name,\n" +
-                "    mi.Price\n" +
-                "FROM\n" +
-                "    menuorderitem moi\n" +
-                "JOIN\n" +
-                "    menuitem mi ON moi.MenuItemID = mi.MenuItemID\n" +
-                "WHERE\n" +
-                "    moi.OrderID = ?\n" +
-                "GROUP BY\n" +
-                "    moi.MenuItemID, mi.Name, mi.Price;";
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = DBConnection.getInstance().getConnection();
-            statement = connection.prepareStatement(sql);
-
-            statement.setString(1, orderId);
-
-            resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                String menuItemID = resultSet.getString("MenuItemID");
-                String itemName = resultSet.getString("Name");
-                int totalQty = resultSet.getInt("TotalQty");
-                double price = Double.parseDouble(resultSet.getString("Price"));
-
-                OrderItemDto orderItem = new OrderItemDto(menuItemID, itemName, totalQty, price);
-                orderItemDto.add(orderItem);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        for (OrderItem orderItem1 : orderItem) {
+            orderItemDto.add(DTOConverter.toDTO(orderItem1, OrderItemDto.class));
         }
 
         return orderItemDto;
     }
 
     public OrderDto getCustomerDetails(String orderId) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT\n" +
-                "    o.OrderID AS orderId,\n" +
-                "    o.EmployeeID AS employeeId,\n" +
-                "    o.TableID AS tableId,\n" +
-                "    o.TotalAmount AS totalAmount,\n" +
-                "    o.Date AS orderDate,\n" +
-                "    c.CustomerID AS customerId,\n" +
-                "    c.Name AS customerName,\n" +
-                "    c.Contact AS customerContact\n" +
-                "FROM\n" +
-                "    orders o\n" +
-                "JOIN\n" +
-                "    customer c ON o.CustomerID = c.CustomerID\n" +
-                "WHERE\n" +
-                "    o.OrderID = ?";
-
-        Connection connection = DBConnection.getInstance().getConnection();
-
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, orderId);
-
-        ResultSet resultSet = statement.executeQuery();
-
-        OrderDto orderDto = null;
-
-        if (resultSet.next()) {
-            orderDto = new OrderDto(
-                    resultSet.getString("orderId"),
-                    resultSet.getString("employeeId"),
-                    resultSet.getString("tableId"),
-                    resultSet.getString("totalAmount"),
-                    resultSet.getString("orderDate"),
-                    resultSet.getString("customerId"),
-                    resultSet.getString("customerName"),
-                    resultSet.getString("customerContact")
-            );
-        }
-
-        resultSet.close();
-        statement.close();
-        connection.close();
-
-        return orderDto;
+        Order order = quoryDAO.getCustomerDetails(orderId);
+        return DTOConverter.toDTO(order, OrderDto.class);
     }
 
     public boolean completeOrder(OrderDto orderDto, PaymentDto paymentDto) throws SQLException, ClassNotFoundException {
-        String tableInfo = "UPDATE TableInfo SET Status = 'Available' WHERE TableID = ?";
-        String menuOrderItem = "UPDATE menuorderItem SET status = 'completed' WHERE OrderID = ?";
-        String payment = "INSERT INTO payment (PaymentID, OrderID, Amount, Date) VALUES (?,?,?,?)";
-
         Connection connection = DBConnection.getInstance().getConnection();
         connection.setAutoCommit(false);
 
-        PreparedStatement statementTableInfo = connection.prepareStatement(tableInfo);
-        PreparedStatement statementMenuOrderItem = connection.prepareStatement(menuOrderItem);
-        PreparedStatement statementPayment = connection.prepareStatement(payment);
+        Table tableDto = new Table();
+        tableDto.setId(orderDto.getTableId());
+        tableDto.setStatus("Available");
 
-        try {
-            statementTableInfo.setString(1, orderDto.getTableId());
+        boolean tableInfo = tableViewDAO.updateTrnsaction(tableDto);
 
-            statementMenuOrderItem.setString(1, orderDto.getOrderId());
-
-            int rowsUpdatedTableInfo = statementTableInfo.executeUpdate();
-            int rowsUpdatedMenuOrderItem = statementMenuOrderItem.executeUpdate();
-
-            statementPayment.setString(1, paymentDto.getPayId());
-            statementPayment.setString(2, paymentDto.getOrderId());
-            statementPayment.setString(3, paymentDto.getAmount());
-            statementPayment.setString(4, paymentDto.getDate());
-
-            int rowsInsertedPayment = statementPayment.executeUpdate();
-
-            if (rowsUpdatedTableInfo > 0 && rowsUpdatedMenuOrderItem > 0 && rowsInsertedPayment > 0) {
-                connection.commit();
-                System.out.println("Order completed successfully.");
-                return true;
-            } else {
-                connection.rollback();
-                System.out.println("Failed to complete the order. Rolling back.");
-                return false;
-            }
-        } catch (SQLException e) {
-            connection.rollback();
-            System.out.println("An error occurred while completing the order. Rolling back.");
-            e.printStackTrace();
+        if(!tableInfo){
+            connection.commit();
             return false;
-        } finally {
-            connection.setAutoCommit(true);
-            statementTableInfo.close();
-            statementMenuOrderItem.close();
-            statementPayment.close();
-            connection.close();
         }
+
+        boolean menuInfo = menuDAO.setStatus(orderDto.getOrderId());
+
+        if(!menuInfo){
+            connection.commit();
+            return false;
+        }
+
+        Payment paymentEntity = DTOConverter.toEntity(paymentDto, Payment.class);
+        boolean paymentInfo = paymentDAO.save(paymentEntity);
+
+        if(!paymentInfo){
+            connection.commit();
+            return false;
+        }
+
+        connection.commit();
+        return true;
     }
 
     public String[] generateNextIDs() throws SQLException, ClassNotFoundException {
