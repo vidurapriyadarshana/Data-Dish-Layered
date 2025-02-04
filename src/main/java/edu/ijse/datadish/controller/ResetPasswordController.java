@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.LogInBoImpl;
 import edu.ijse.datadish.dao.custom.impl.LogInDAOImpl;
 import edu.ijse.datadish.dto.LogInDto;
 import edu.ijse.datadish.util.Refarance;
@@ -24,7 +26,7 @@ public class ResetPasswordController implements Initializable {
 
     private String email;
 
-    private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
+    private LogInBoImpl logInBo = (LogInBoImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.LOGIN);
 
     @FXML
     void cancelAction(ActionEvent event) {
@@ -47,7 +49,7 @@ public class ResetPasswordController implements Initializable {
             return;
         }
 
-        logInDAOImpl.update(new LogInDto(email, newPassword));
+        logInBo.update(new LogInDto(email, newPassword));
     }
 
     @Override

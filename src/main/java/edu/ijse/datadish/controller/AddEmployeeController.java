@@ -1,6 +1,8 @@
 
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddEmployeeBOImpl;
 import edu.ijse.datadish.dao.custom.AddEmployeeDAO;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dao.custom.impl.AddEmployeeDAOImpl;
@@ -70,10 +72,9 @@ public class AddEmployeeController implements Initializable {
     @FXML
     private ChoiceBox<String> choiceBox;
 
-    private EmployeeDto employeeDto = new EmployeeDto();
-    private AddEmployeeDAOImpl addEmployeeDAOImpl = new AddEmployeeDAOImpl();
-
-    private String[] roleChoice = {"Admin","Employee"};
+    private final EmployeeDto employeeDto = new EmployeeDto();
+    private final AddEmployeeBOImpl addEmployeeBO = (AddEmployeeBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_EMPLOYEE);
+    private final String[] roleChoice = {"Admin","Employee"};
 
     @FXML
     void signUpOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
@@ -138,7 +139,7 @@ public class AddEmployeeController implements Initializable {
         employeeDto.setUserName(userName);
         employeeDto.setPassword(password);
 
-        boolean isSaved = addEmployeeDAOImpl.saveEmployee(employeeDto);
+        boolean isSaved = addEmployeeBO.save(employeeDto);
 
         if (isSaved) {
             showAlert("Success", "Employee saved successfully.");
@@ -158,7 +159,11 @@ public class AddEmployeeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        lblEmpId.setText(new AddEmployeeDAOImpl().generateNextID());
+        try {
+            lblEmpId.setText(new AddEmployeeDAOImpl().generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         lblHireDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         choiceBox.getItems().addAll(roleChoice);
 

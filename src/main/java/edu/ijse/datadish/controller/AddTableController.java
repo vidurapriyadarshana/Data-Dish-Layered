@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddTableBOImpl;
 import edu.ijse.datadish.dao.custom.impl.AddTableDAOImpl;
 import edu.ijse.datadish.dto.TableDto;
 import javafx.event.ActionEvent;
@@ -30,9 +32,11 @@ public class AddTableController implements Initializable {
     @FXML
     private TextField txtCapacity;
 
+    private final AddTableBOImpl addNewTableBo = (AddTableBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_TABLE);
+
     @FXML
     void addNewTableAction(ActionEvent event) throws SQLException, ClassNotFoundException {
-        boolean result = AddTableDAOImpl.addNewTable(new TableDto(setTableId.getText(), Integer.parseInt(txtCapacity.getText())));
+        boolean result = addNewTableBo.save(new TableDto(setTableId.getText(), Integer.parseInt(txtCapacity.getText())));
 
         if(result) {
             showAlert("Add Table", "Table Added Successfully");
@@ -45,7 +49,11 @@ public class AddTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setTableId.setText(AddTableDAOImpl.generateNextID());
+        try {
+            setTableId.setText(addNewTableBo.generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void showAlert(String title, String message) {

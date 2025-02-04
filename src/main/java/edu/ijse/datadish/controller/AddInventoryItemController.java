@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddInventoryItemBOImpl;
 import edu.ijse.datadish.dto.InventoryDto;
 import edu.ijse.datadish.dao.custom.impl.AddInventoryItemDAOImpl;
 import javafx.event.ActionEvent;
@@ -34,6 +36,10 @@ public class AddInventoryItemController implements Initializable {
 
     private InventoryDto inventoryDto = new InventoryDto();
 
+
+    //AddInventoryItemDAOImpl
+    private final AddInventoryItemBOImpl addInventoryItemBO = (AddInventoryItemBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_INVENTORY_ITEM);
+
     @FXML
     void addItemAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         String id = lblSerID.getText();
@@ -46,7 +52,7 @@ public class AddInventoryItemController implements Initializable {
         inventoryDto.setQty(qty);
         inventoryDto.setStockLevel(stockLevel);
 
-        boolean result = AddInventoryItemDAOImpl.addItem(inventoryDto);
+        boolean result = addInventoryItemBO.save(inventoryDto);
 
         if(result){
             showAlert("Add Item", "Item Added Successfully");
@@ -63,7 +69,11 @@ public class AddInventoryItemController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblSerID.setText(AddInventoryItemDAOImpl.generateNextID());
+        try {
+            lblSerID.setText(addInventoryItemBO.generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void showAlert(String title, String message) {

@@ -1,18 +1,26 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddEmployeeSalaryBOImpl;
+import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
 import edu.ijse.datadish.dao.custom.impl.AddEmployeeSalaryDAOImpl;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AddEmployeeSalaryController implements Initializable {
@@ -38,7 +46,10 @@ public class AddEmployeeSalaryController implements Initializable {
     @FXML
     private ChoiceBox<String> chooseEmployee;
 
+    @Setter
+    @Getter
     private SalaryDto salaryDto = new SalaryDto();
+    private final AddEmployeeSalaryBOImpl addSalary = (AddEmployeeSalaryBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_EMPLOYEE_SALARY);
 
     @FXML
     void addSalaryAction(ActionEvent event) {
@@ -54,7 +65,7 @@ public class AddEmployeeSalaryController implements Initializable {
             }
 
             double amount = Double.parseDouble(salaryText);
-            String employeeId = AddEmployeeSalaryDAOImpl.getEmployeeId(employeeName);
+            String employeeId = addSalary.generateNewId(employeeName);
 
             if (employeeId == null) {
                 showAlert("Error", "Employee not found. Please select a valid employee.");
@@ -67,7 +78,7 @@ public class AddEmployeeSalaryController implements Initializable {
             salaryDto.setDate(paymentDate);
             salaryDto.setAmount(amount);
 
-            boolean isAdded = AddEmployeeSalaryDAOImpl.addSalary(salaryDto);
+            boolean isAdded = addSalary.save(salaryDto);
 
             if (isAdded) {
                 showAlert("Add Salary", "Salary added successfully!");
@@ -86,16 +97,22 @@ public class AddEmployeeSalaryController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblSalaryID.setText(AddEmployeeSalaryDAOImpl.generateNextID());
+        try {
+            lblSalaryID.setText(addSalary.generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         try {
-            chooseEmployee.getItems().addAll(AddEmployeeSalaryDAOImpl.getEmployeeNames());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+            List<EmployeeDto> employeeList = addSalary.getAll();
+            ObservableList<EmployeeDto> employees = FXCollections.observableArrayList(employeeList); // Convert to ObservableList
+
+            chooseEmployee.getItems().addAll(String.valueOf(employees));
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private void showAlert(String title, String message) {

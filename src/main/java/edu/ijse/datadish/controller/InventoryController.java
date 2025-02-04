@@ -1,9 +1,12 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.InventoryBOImpl;
 import edu.ijse.datadish.dto.InventoryDto;
 import edu.ijse.datadish.dao.custom.impl.InventoryDAOImpl;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class InventoryController implements Initializable {
@@ -46,7 +50,8 @@ public class InventoryController implements Initializable {
     private TableColumn<InventoryDto, String> colAction;
 
 
-    private InventoryDAOImpl inventoryDAOImpl = new InventoryDAOImpl();
+    //private InventoryDAOImpl inventoryDAOImpl = new InventoryDAOImpl();
+    private final InventoryBOImpl inventoryBO = (InventoryBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.INVENTORY);
 
     @FXML
     void addItemAction(ActionEvent event) throws IOException {
@@ -107,24 +112,20 @@ public class InventoryController implements Initializable {
     }
 
     private void removeItem(InventoryDto inventoryDto) throws SQLException, ClassNotFoundException {
-        boolean result = inventoryDAOImpl.removeItem(inventoryDto.getId());
-
-        if(result){
-            loadInventoryData();
-            showAlert("Remove Item", "Item Removed Successfully");
-        }else{
-            showAlert("Remove Item", "Item Removal Failed");
-        }
+        inventoryBO.delete(inventoryDto.getId());
     }
 
 
     private void loadInventoryData() {
         try {
-            ObservableList<InventoryDto> inventoryItems = inventoryDAOImpl.getAllInventoryItems();
+            List<InventoryDto> inventoryList = inventoryBO.getAll();
+            ObservableList<InventoryDto> inventoryItems = FXCollections.observableArrayList(inventoryList);
+
             inventoryTable.setItems(inventoryItems);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+
     }
 
     private void showAlert(String title, String message) {

@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.LogInBoImpl;
 import edu.ijse.datadish.dao.custom.impl.LogInDAOImpl;
 import edu.ijse.datadish.util.Refarance;
 import javafx.event.ActionEvent;
@@ -19,10 +21,12 @@ public class ForgotPasswordController {
     @FXML
     private TextField txtEmail;
 
-    private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
+    //private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
+    private final LogInBoImpl logInBo = (LogInBoImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.LOGIN);
+
     private int generatedOtp;
 
-    private CustMailSenderController mailSenderController = new CustMailSenderController();
+    private final CustMailSenderController mailSenderController = new CustMailSenderController();
 
     @FXML
     void cancelAction(ActionEvent event) {
@@ -40,7 +44,7 @@ public class ForgotPasswordController {
         }
 
         try {
-            boolean emailExists = logInDAOImpl.checkEmail(email);
+            boolean emailExists = logInBo.exist(email);
 
             if (emailExists) {
                 generatedOtp = generateOtp();

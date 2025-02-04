@@ -1,5 +1,8 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.EmployeeViewBOImpl;
+import edu.ijse.datadish.bo.custom.impl.UpdateEmployeeBOImpl;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dao.custom.impl.UpdateEmployeeDAOImpl;
 import javafx.event.ActionEvent;
@@ -46,7 +49,9 @@ public class UpdateEmployeeController implements Initializable {
 
     private EmployeeDto employeeDto;
 
-    private UpdateEmployeeDAOImpl updateEmployeeDAOImpl = new UpdateEmployeeDAOImpl();
+    //private UpdateEmployeeDAOImpl updateEmployeeDAOImpl = new UpdateEmployeeDAOImpl();
+    private final EmployeeViewBOImpl employeeViewBOImpl = (EmployeeViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EMPLOYEE_VIEW);
+    private final UpdateEmployeeBOImpl updateEmployeeBO = (UpdateEmployeeBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.UPDATE_EMPLOYEE);
 
     public void setEmployeeData(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
         this.employeeDto = employeeDto;
@@ -56,7 +61,7 @@ public class UpdateEmployeeController implements Initializable {
         txtContact.setText(employeeDto.getEmployeeContact());
         lblDate.setText(employeeDto.getHireDate());
         actionStatus.setSelected("Active".equals(employeeDto.getEmployeeStatus()));
-        txtEmail.setText(updateEmployeeDAOImpl.getEmployeeEmail(employeeDto.getEmployeeID()));
+        txtEmail.setText(updateEmployeeBO.getEmployeeEmail(employeeDto.getEmployeeID()));
     }
 
     @FXML
@@ -86,15 +91,7 @@ public class UpdateEmployeeController implements Initializable {
         employeeDto.setEmployeeStatus(status);
         employeeDto.setEmail(email);
 
-        boolean result = updateEmployeeDAOImpl.updateEmployee(employeeDto);
-
-        if (result) {
-            showAlert("Success", "Employee Updated Successfully");
-            Stage stage = (Stage) mainAnchor.getScene().getWindow();
-            stage.close();
-        } else {
-            showAlert("Error", "Employee Update Failed");
-        }
+        updateEmployeeBO.update(employeeDto);
 
         Stage stage = (Stage) mainAnchor.getScene().getWindow();
         stage.close();

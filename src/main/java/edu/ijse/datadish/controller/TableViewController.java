@@ -1,9 +1,12 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.TableViewBOImpl;
 import edu.ijse.datadish.dto.TableDto;
 import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +21,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TableViewController implements Initializable {
@@ -40,7 +45,8 @@ public class TableViewController implements Initializable {
     @FXML
     private TableColumn<TableDto, Void> colActions;
 
-    private final TableViewDAOImpl tableViewDAOImpl = new TableViewDAOImpl();
+    //private final TableViewDAOImpl tableViewDAOImpl = new TableViewDAOImpl();
+    private final TableViewBOImpl tableViewBO = (TableViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.TABLE_VIEW);
 
     @FXML
     void addTableAction(ActionEvent event) throws IOException {
@@ -62,13 +68,20 @@ public class TableViewController implements Initializable {
 
         addActionsColumn();
 
-        loadTableData();
+        try {
+            loadTableData();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void loadTableData() {
-        ObservableList<TableDto> tables = tableViewDAOImpl.getAllTables();
+    private void loadTableData() throws SQLException, ClassNotFoundException {
+        List<TableDto> tableList = tableViewBO.getAll();
+        ObservableList<TableDto> tables = FXCollections.observableArrayList(tableList);
+
         loadTable.setItems(tables);
     }
+
 
     private void addActionsColumn() {
         colActions.setCellFactory(param -> new TableCell<>() {
@@ -80,12 +93,20 @@ public class TableViewController implements Initializable {
 
                 deleteButton.setOnAction(event -> {
                     TableDto tableDto = getTableView().getItems().get(getIndex());
-                    handleDeleteAction(tableDto);
+                    try {
+                        handleDeleteAction(tableDto);
+                    } catch (SQLException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
 
                 statusCheckBox.setOnAction(event -> {
                     TableDto tableDto = getTableView().getItems().get(getIndex());
-                    handleStatusToggle(tableDto, statusCheckBox.isSelected());
+                    try {
+                        handleStatusToggle(tableDto, statusCheckBox.isSelected());
+                    } catch (SQLException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
             }
 
@@ -109,27 +130,13 @@ public class TableViewController implements Initializable {
     }
 
 
-    private void handleDeleteAction(TableDto tableDto) {
-        boolean isDeleted = tableViewDAOImpl.deleteTable(tableDto.getId());
-        if (isDeleted) {
-            loadTable.getItems().remove(tableDto);
-            showAlert("Table Deleted", "Table ID " + tableDto.getId() + " has been deleted successfully.");
-        } else {
-            showAlert("Delete Failed", "Failed to delete table ID " + tableDto.getId());
-        }
+    private void handleDeleteAction(TableDto tableDto) throws SQLException, ClassNotFoundException {
+        tableViewBO.delete(tableDto.getId());
     }
 
-    private void handleStatusToggle(TableDto tableDto, boolean isReserved) {
+    private void handleStatusToggle(TableDto tableDto, boolean isReserved) throws SQLException, ClassNotFoundException {
         String newStatus = isReserved ? "Reserved" : "Available";
-        boolean isUpdated = tableViewDAOImpl.update(new TableDto(tableDto.getId(), newStatus));
-
-        if (isUpdated) {
-            tableDto.setStatus(newStatus);
-            loadTable.refresh();
-            showAlert("Status Updated", "Table ID " + tableDto.getId() + " is now " + newStatus + ".");
-        } else {
-            showAlert("Update Failed", "Failed to update status for table ID " + tableDto.getId());
-        }
+        tableViewBO.update(new TableDto(tableDto.getId(), newStatus));
     }
 
     private void showAlert(String title, String message) {

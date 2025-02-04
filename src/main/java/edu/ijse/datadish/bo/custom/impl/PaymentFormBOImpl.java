@@ -3,6 +3,7 @@ package edu.ijse.datadish.bo.custom.impl;
 import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.bo.custom.PaymentFormBo;
 import edu.ijse.datadish.dao.DAOFactory;
+import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.impl.*;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.OrderDto;
@@ -108,6 +109,11 @@ public class PaymentFormBOImpl implements PaymentFormBo {
         } finally {
             connection.setAutoCommit(true);
         }
+    }
+
+    public boolean save(PaymentDto dto) throws SQLException, ClassNotFoundException {
+        Payment payment = DTOConverter.toEntity(dto, Payment.class);
+        return paymentDAO.save(payment);
     }
 
 }

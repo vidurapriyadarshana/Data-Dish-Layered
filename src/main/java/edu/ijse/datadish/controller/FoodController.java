@@ -30,6 +30,7 @@ public class FoodController {
     private Label foodCount;
 
     private FoodDto foodItem;
+
     @Setter
     private Runnable addToCartAction;
 

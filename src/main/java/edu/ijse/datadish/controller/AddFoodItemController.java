@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddFoodItemBOImpl;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.dao.custom.impl.AddFoodItemDAOImpl;
 import javafx.event.ActionEvent;
@@ -51,11 +53,11 @@ public class AddFoodItemController implements Initializable {
     private TextField txtPrice;
 
     private final FoodDto foodDto = new FoodDto();
-    private final AddFoodItemDAOImpl addFoodItemDAOImpl = new AddFoodItemDAOImpl();
+    private final AddFoodItemBOImpl addFoodItemBO = (AddFoodItemBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_FOOD_ITEM);
 
     @FXML
     void addItemAction(ActionEvent event) throws SQLException, ClassNotFoundException {
-        String id = AddFoodItemDAOImpl.generateNextID();
+        String id = addFoodItemBO.generateNewId();
         lblId.setText(id);
         foodDto.setFoodId(id);
         foodDto.setFoodName(txtName.getText());
@@ -64,7 +66,7 @@ public class AddFoodItemController implements Initializable {
         foodDto.setFoodAvailability("Available");
 
         try {
-            boolean isAdded = addFoodItemDAOImpl.addItem(foodDto);
+            boolean isAdded = addFoodItemBO.save(foodDto);
             if (isAdded) {
                 showAlert("Add Item", "Item Added Successfully");
             } else {
@@ -86,7 +88,7 @@ public class AddFoodItemController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(mainAnchor.getScene().getWindow());
         if (selectedFile != null) {
             try {
-                String imagePath = AddFoodItemDAOImpl.saveImage(selectedFile, txtName.getText());
+                String imagePath = addFoodItemBO.saveImage(selectedFile, txtName.getText());
                 foodDto.setFoodImagePath(imagePath);
 
                 Image image = new Image(selectedFile.toURI().toString());
@@ -107,6 +109,10 @@ public class AddFoodItemController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblId.setText(AddFoodItemDAOImpl.generateNextID());
+        try {
+            lblId.setText(addFoodItemBO.generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

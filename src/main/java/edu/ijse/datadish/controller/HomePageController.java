@@ -1,5 +1,10 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.CustomerBOImpl;
+import edu.ijse.datadish.bo.custom.impl.HomePageBOImpl;
+import edu.ijse.datadish.bo.custom.impl.OrderBOImpl;
+import edu.ijse.datadish.bo.custom.impl.TableViewBOImpl;
 import edu.ijse.datadish.dto.*;
 import edu.ijse.datadish.dao.custom.impl.HomePageDAOImpl;
 import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
@@ -71,9 +76,13 @@ public class HomePageController implements Initializable {
     private Map<FoodDto, Integer> cartItems = new HashMap<>();
     private double totalPrice = 0.0;
 
+    private final HomePageBOImpl homePageBO = (HomePageBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.HOME_PAGE);
+    private final OrderBOImpl orderBO = (OrderBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ORDERS);
+    private final CustomerBOImpl customerBO = (CustomerBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
+    private final TableViewBOImpl tableViewBO = (TableViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.TABLE_VIEW);
 
-    private void loadMenuItems() {
-        List<FoodDto> foodItems = HomePageDAOImpl.getAllMenuItems();
+    private void loadMenuItems() throws SQLException, ClassNotFoundException {
+        List<FoodDto> foodItems = homePageBO.getAll();
         int row = 0;
         int col = 0;
 
@@ -202,7 +211,7 @@ public class HomePageController implements Initializable {
         TableDto table = new TableDto();
         table.setId(selectedTable);
 
-        boolean isOrderSaved = HomePageDAOImpl.save(orderItems, order, customerDTO,table);
+        boolean isOrderSaved = homePageBO.save(orderItems, order, customerDTO,table);
         if (isOrderSaved) {
             System.out.println("Order saved successfully!");
             resetForm();
@@ -210,7 +219,7 @@ public class HomePageController implements Initializable {
         }
     }
 
-    private void resetForm() {
+    private void resetForm() throws SQLException, ClassNotFoundException {
         cartItems.clear();
         updateCartDisplay();
 
@@ -219,8 +228,8 @@ public class HomePageController implements Initializable {
 
         selectTable.setValue(null);
 
-        lblOrderId.setText(HomePageDAOImpl.generateNextOrderID());
-        customerId = HomePageDAOImpl.generateNextCustomerID();
+        lblOrderId.setText(orderBO.generateNewId());
+        customerId = customerBO.generateNewId();
 
         totalPriceLabel.setText("Total: LKR0.00");
     }
@@ -230,16 +239,37 @@ public class HomePageController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.empId = Refarance.employeeID;
-        loadMenuItems();
-        lblOrderId.setText(HomePageDAOImpl.generateNextOrderID());
+        try {
+            loadMenuItems();
+            lblOrderId.setText(orderBO.generateNewId());
+            customerId = customerBO.generateNewId();
+            loadTableIds();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         lblEmpId.setText(empId);
-        customerId = HomePageDAOImpl.generateNextCustomerID();
-        loadTableIds();
+//        try {
+//            lblOrderId.setText(orderBO.generateNewId());
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        lblEmpId.setText(empId);
+//        try {
+//            customerId = customerBO.generateNewId();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        try {
+//            loadTableIds();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
-    private void loadTableIds() {
+    private void loadTableIds() throws SQLException, ClassNotFoundException {
         TableViewDAOImpl tableViewDAOImpl = new TableViewDAOImpl();
-        ObservableList<TableDto> tableList = tableViewDAOImpl.getAvailableTables();
+        ObservableList<TableDto> tableList = tableViewBO.getAvailableTables();
 
         ObservableList<String> tableIds = FXCollections.observableArrayList();
         for (TableDto table : tableList) {

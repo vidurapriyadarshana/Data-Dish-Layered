@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.ReportBOImpl;
 import edu.ijse.datadish.dao.custom.impl.ReportDAOImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +28,8 @@ public class ReportController {
     @FXML
     private Label lblMostSoldItem;
 
+    private final ReportBOImpl reportBO = (ReportBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.REPORTS);
+
     public void initialize() {
         loadDailyIncomeChart();
         loadProfitChart();
@@ -34,7 +38,7 @@ public class ReportController {
 
     private void loadDailyIncomeChart() {
         try {
-            Map<String, Double> dailyIncomeData = ReportDAOImpl.getDailyIncomeData();
+            Map<String, Double> dailyIncomeData = reportBO.getDailyIncomeData();
 
             ObservableList<XYChart.Data<String, Number>> chartData = FXCollections.observableArrayList();
             for (Map.Entry<String, Double> entry : dailyIncomeData.entrySet()) {
@@ -61,7 +65,7 @@ public class ReportController {
 
     private void loadProfitChart() {
         try {
-            Map<String, Double> profitData = ReportDAOImpl.getMonthlyProfitData();
+            Map<String, Double> profitData = reportBO.getMonthlyProfitData();
 
             ObservableList<XYChart.Data<String, Number>> chartData = FXCollections.observableArrayList();
             for (Map.Entry<String, Double> entry : profitData.entrySet()) {
@@ -88,7 +92,7 @@ public class ReportController {
 
     private void loadSummaryData() {
         try {
-            double totalSalaries = ReportDAOImpl.getTotalSalaries();
+            double totalSalaries = reportBO.getTotalSalaries();
             lblTotalSalaries.setText("Total Salaries: LKR " + totalSalaries);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();

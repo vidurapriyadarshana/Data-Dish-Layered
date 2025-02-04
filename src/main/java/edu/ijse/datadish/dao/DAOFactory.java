@@ -34,7 +34,8 @@ public class DAOFactory {
         CUSTOMER,
         ORDER,
         MENU,
-        PAYMENT;
+        PAYMENT,
+        NOTIFICATION;
     }
 
     public SuperDAO getDAO(DAOTypes daoTypes) {
@@ -81,6 +82,8 @@ public class DAOFactory {
                 return new MenuDAOImpl();
             case PAYMENT:
                 return new PaymentDAOImpl();
+            case NOTIFICATION:
+                return new NotificationDAOImpl();
             default:
                 return null;
         }

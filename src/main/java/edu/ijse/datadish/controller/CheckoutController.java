@@ -1,7 +1,8 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.QuoryBOImpl;
 import edu.ijse.datadish.dto.OrderTableDto;
-import edu.ijse.datadish.dao.custom.impl.CheckoutDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,7 +29,8 @@ public class CheckoutController {
     @FXML
     private TextField searchBar;
 
-    private final CheckoutDAOImpl checkoutDAOImpl = new CheckoutDAOImpl();
+    //private final CheckoutDAOImpl checkoutDAOImpl = new CheckoutDAOImpl();
+    private final QuoryBOImpl quoryBO = (QuoryBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.QUARY);
 
     @FXML
     public void initialize() {
@@ -39,7 +41,7 @@ public class CheckoutController {
         try {
             ordersGrid.getChildren().clear();
 
-            List<OrderTableDto> orders = checkoutDAOImpl.loadIncompleteOrders();
+            List<OrderTableDto> orders = quoryBO.loadIncompleteOrders();
             int row = 0;
             int column = 0;
 
@@ -81,7 +83,7 @@ public class CheckoutController {
         ordersGrid.getChildren().clear();
 
         try {
-            List<OrderTableDto> orders = checkoutDAOImpl.loadIncompleteOrders();
+            List<OrderTableDto> orders = quoryBO.loadIncompleteOrders();
 
             int row = 0;
             int column = 0;

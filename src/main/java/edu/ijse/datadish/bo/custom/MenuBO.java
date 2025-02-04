@@ -12,7 +12,7 @@ import edu.ijse.datadish.entity.OrderItem;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public interface MenuBO extends SuperBO {.
+public interface MenuBO extends SuperBO {
 
     ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException;
     boolean save(FoodDto dto) throws SQLException, ClassNotFoundException;

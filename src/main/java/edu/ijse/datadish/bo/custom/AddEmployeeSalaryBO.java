@@ -1,11 +1,8 @@
 package edu.ijse.datadish.bo.custom;
 
-import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.bo.SuperBO;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
-import edu.ijse.datadish.entity.Employee;
-import edu.ijse.datadish.entity.Salary;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

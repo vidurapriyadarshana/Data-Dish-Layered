@@ -12,4 +12,5 @@ public interface PaymentFormBo extends SuperBO {
     OrderDto getCustomerDetails(String orderId) throws SQLException, ClassNotFoundException;
     boolean completeOrder(OrderDto orderDto, PaymentDto paymentDto) throws SQLException, ClassNotFoundException;
     String[] generateNextIDs() throws SQLException, ClassNotFoundException;
+    boolean save(PaymentDto dto) throws SQLException, ClassNotFoundException;
 }

@@ -1,5 +1,10 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.NotificationBOImpl;
+import edu.ijse.datadish.bo.custom.impl.PaymentFormBOImpl;
+import edu.ijse.datadish.bo.custom.impl.QuoryBOImpl;
+import edu.ijse.datadish.dao.custom.impl.NotificationDAOImpl;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.*;
 import edu.ijse.datadish.dao.custom.impl.PaymentFormDAOImpl;
@@ -71,7 +76,7 @@ public class PaymentFormController implements Initializable {
 
     @FXML
     private TextField txtEmail;
-
+    private String[] nextIDs;
     private List<OrderItemDto> orderItems;
     private OrderDto orderDto;
     private String paymentId;
@@ -80,6 +85,10 @@ public class PaymentFormController implements Initializable {
 
     private PaymentDto paymentDto = new PaymentDto();
 
+    private final PaymentFormBOImpl paymentFormBO = (PaymentFormBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PAYMENT_FORM);
+    private final QuoryBOImpl quoryBO = (QuoryBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.QUARY);
+    private final NotificationBOImpl notificationBO = (NotificationBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.NOTIFICATION);
+
     @FXML
     void completeOrderOnAction(ActionEvent event) throws SQLException, ClassNotFoundException {
         paymentDto.setOrderId(orderDto.getOrderId());
@@ -87,7 +96,7 @@ public class PaymentFormController implements Initializable {
         paymentDto.setDate(setDate.getText());
         paymentDto.setAmount(orderDto.getTotalAmount());
 
-        boolean result = PaymentFormDAOImpl.completeOrder(orderDto, paymentDto);
+        boolean result = paymentFormBO.completeOrder(orderDto, paymentDto);
 
         if (result) {
             showAlert("Order Completed", "Order Completed Successfully");
@@ -102,7 +111,7 @@ public class PaymentFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lblpaymentID.setText(PaymentFormDAOImpl.generateNextPayID());
+        lblpaymentID.setText(nextIDs[0]);
         this.paymentId = lblpaymentID.getText();
 
         setDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
@@ -112,8 +121,9 @@ public class PaymentFormController implements Initializable {
     public void setOrderId(OrderTableDto order) throws SQLException, ClassNotFoundException {
         setOrderId.setText(order.getOrderId());
 
-        orderItems = PaymentFormDAOImpl.getItemDetails(order.getOrderId());
-        orderDto = PaymentFormDAOImpl.getCustomerDetails(order.getOrderId());
+
+        orderItems = quoryBO.getItemDetails(order.getOrderId());
+        orderDto = quoryBO.getCustomerDetails(order.getOrderId());
 
         setTotalAfterDiscount.setText(orderDto.getTotalAmount());
         setEmployeeName.setText(order.getEmployeeId());
@@ -164,7 +174,10 @@ public class PaymentFormController implements Initializable {
         orderdItemLoad.getChildren().add(gridPane);
     }
 
-    public void printBill() {
+    public void printBill() throws SQLException, ClassNotFoundException {
+
+        nextIDs = paymentFormBO.generateNextIDs();
+
         String orderId = setOrderId.getText();
         System.out.println("orderId: " + orderId);
 
@@ -248,7 +261,7 @@ public class PaymentFormController implements Initializable {
         CustMailSenderController mailSender = new CustMailSenderController();
         mailSender.sendEmail(customerEmail, subject, emailBody.toString());
 
-        this.notificationId = PaymentFormDAOImpl.generateNotificationId();
+        this.notificationId = nextIDs[1];
 
         notificationDto.setNotificationId(notificationId);
         notificationDto.setCustomerId(orderDto.getCustomerId());
@@ -260,7 +273,7 @@ public class PaymentFormController implements Initializable {
         System.out.println("Order ID: " + orderId);
         System.out.println(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-        boolean result = PaymentFormDAOImpl.saveNotification(notificationDto);
+        boolean result = notificationBO.save(notificationDto);
 
         if(result) {
             showAlert("Notification Sent", "Notification Sent Successfully");

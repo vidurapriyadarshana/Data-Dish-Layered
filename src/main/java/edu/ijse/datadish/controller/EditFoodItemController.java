@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.EditFoodItemBOImpl;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.dao.custom.impl.EditFoodItemDAOImpl;
 import javafx.event.ActionEvent;
@@ -51,7 +53,9 @@ public class EditFoodItemController implements Initializable {
     private AnchorPane mainAnchor;
 
     private FoodDto foodDto = new FoodDto();
-    private EditFoodItemDAOImpl editFoodItemDAOImpl = new EditFoodItemDAOImpl();
+    //private EditFoodItemDAOImpl editFoodItemDAOImpl = new EditFoodItemDAOImpl();
+
+    private final EditFoodItemBOImpl editFoodItemBO = (EditFoodItemBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EDIT_FOOD_ITEM);
 
     @FXML
     void changeImageAction(ActionEvent event) {
@@ -61,10 +65,10 @@ public class EditFoodItemController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(mainAnchor.getScene().getWindow());
         if (selectedFile != null) {
             try {
-                String imagePath = EditFoodItemDAOImpl.saveImage(selectedFile, txtName.getText());
+                String imagePath = editFoodItemBO.saveImage(selectedFile, txtName.getText());
                 foodDto.setFoodImagePath(imagePath);
 
-                boolean isAdded = editFoodItemDAOImpl.saveImagePath(foodDto.getFoodId(), imagePath);
+                boolean isAdded = editFoodItemBO.saveImagePath(foodDto.getFoodId(), imagePath);
 
                 if (isAdded) {
                     showAlert("Edit Item", "Image Saved Successfully");
@@ -96,12 +100,7 @@ public class EditFoodItemController implements Initializable {
         foodDto.setFoodCategory(category);
         //foodDto.setFoodAvailability(availability);
 
-        boolean isUpdated = editFoodItemDAOImpl.updateFoodItem(foodDto);
-        if (isUpdated) {
-            showAlert("Edit Item", "Item Edited Successfully");
-        } else {
-            showAlert("Edit Item", "Item Edited Unsuccessfully");
-        }
+        editFoodItemBO.update(foodDto);
 
         Stage stage = (Stage) mainAnchor.getScene().getWindow();
         stage.close();
@@ -120,7 +119,7 @@ public class EditFoodItemController implements Initializable {
         txtPrice.setText(String.valueOf(food.getFoodPrice()));
         txtCategory.setText(food.getFoodCategory());
 
-        String imagePath = editFoodItemDAOImpl.getImagePath(food.getFoodId());
+        String imagePath = editFoodItemBO.getImagePath(food.getFoodId());
 
         if (imagePath != null) {
             try {

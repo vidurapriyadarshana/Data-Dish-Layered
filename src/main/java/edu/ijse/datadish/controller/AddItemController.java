@@ -1,8 +1,11 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.AddItemBOImpl;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.dao.custom.impl.AddItemDAOImpl;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -49,7 +53,9 @@ public class AddItemController implements Initializable {
     @FXML
     private TableView<FoodDto> itemMenuTable;
 
-    private AddItemDAOImpl addItemDAOImpl;
+    //private AddItemDAOImpl addItemDAOImpl;
+
+    private AddItemBOImpl addItemBO = (AddItemBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ADD_FOOD_ITEM);
 
     @FXML
     void addItemAction(ActionEvent event) throws IOException {
@@ -63,9 +69,18 @@ public class AddItemController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        addItemDAOImpl = new AddItemDAOImpl();
-        ObservableList<FoodDto> foodItems = addItemDAOImpl.loadTable();
+        addItemBO = new AddItemBOImpl();
+        ObservableList<FoodDto> foodItems = FXCollections.observableArrayList();
+
+        try {
+            List<FoodDto> foodList = addItemBO.getAll();
+            foodItems.addAll(foodList);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         itemMenuTable.setItems(foodItems);
+
 
         colId.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFoodId()));
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFoodName()));
@@ -98,7 +113,13 @@ public class AddItemController implements Initializable {
 
                         deleteButton.setOnAction(event -> {
                             FoodDto food = getTableView().getItems().get(getIndex());
-                            deleteFoodItem(food);
+                            try {
+                                deleteFoodItem(food);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
                         });
 
                     }
@@ -132,7 +153,7 @@ public class AddItemController implements Initializable {
         System.out.println("Editing item: " + food.getFoodName());
     }
 
-    private void deleteFoodItem(FoodDto food) {
+    private void deleteFoodItem(FoodDto food) throws SQLException, ClassNotFoundException {
         Alert confirmDelete = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDelete.setTitle("Delete Confirmation");
         confirmDelete.setHeaderText("Are you sure you want to delete this item?");
@@ -140,14 +161,7 @@ public class AddItemController implements Initializable {
 
         Optional<ButtonType> result = confirmDelete.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            boolean deleteResult = addItemDAOImpl.delete(food.getFoodId());
-
-            if (deleteResult) {
-                showAlert("Delete Item", "Item Deleted Successfully");
-                itemMenuTable.setItems(addItemDAOImpl.loadTable());
-            } else {
-                showAlert("Delete Item", "Item Not Deleted");
-            }
+            addItemBO.delete(food.getFoodId());
             System.out.println("Deleting item: " + food.getFoodName());
         } else {
             System.out.println("Deletion canceled.");

@@ -1,5 +1,7 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.LogInBoImpl;
 import edu.ijse.datadish.dto.LogInDto;
 import edu.ijse.datadish.util.Refarance;
 import javafx.event.ActionEvent;
@@ -34,7 +36,8 @@ public class LoginController {
     @FXML
     private PasswordField txtpassword;
 
-    private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
+    //private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
+    private final LogInBoImpl logInBo = (LogInBoImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.LOGIN);
     private LogInDto logInDto = new LogInDto();
 
     @FXML
@@ -54,7 +57,7 @@ public class LoginController {
 
 
         try {
-            boolean isLoggedIn = logInDAOImpl.checkLogin(logInDto);
+            boolean isLoggedIn = logInBo.checkLogin(logInDto);
 
             Refarance.employeeUserName = userName;
             Refarance.employeeRole = logInDto.getRole();

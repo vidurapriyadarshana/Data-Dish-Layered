@@ -1,9 +1,12 @@
 package edu.ijse.datadish.controller;
 
+import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.impl.EmployeeViewBOImpl;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
 import edu.ijse.datadish.dao.custom.impl.EmployeeViewDAOImpl;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +24,7 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class EmployeeViewController implements Initializable {
@@ -49,7 +53,6 @@ public class EmployeeViewController implements Initializable {
     @FXML
     private TableView<EmployeeDto> employeeTable;
 
-    private EmployeeViewDAOImpl employeeViewDAOImpl;
 
     @FXML
     private AnchorPane mainAnchor;
@@ -72,6 +75,11 @@ public class EmployeeViewController implements Initializable {
     @FXML
     private TableColumn<SalaryDto, String> colSalaryAction;
 
+
+    //private EmployeeViewDAOImpl employeeViewDAOImpl;
+
+    private EmployeeViewBOImpl employeeViewBO = (EmployeeViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EMPLOYEE_VIEW);
+
     @FXML
     void addEmployeeAction(ActionEvent event) {
         try {
@@ -90,7 +98,7 @@ public class EmployeeViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        employeeViewDAOImpl = new EmployeeViewDAOImpl();
+        employeeViewBO = new EmployeeViewBOImpl();
         loadSalaryTable();
         reloadEmployeeTable();
 
@@ -140,16 +148,21 @@ public class EmployeeViewController implements Initializable {
 
     private void reloadEmployeeTable() {
         try {
-            ObservableList<EmployeeDto> employees = employeeViewDAOImpl.loadEmpTable();
+            List<EmployeeDto> employeeList = employeeViewBO.getAll();
+            ObservableList<EmployeeDto> employees = FXCollections.observableArrayList(employeeList);
+
             employeeTable.setItems(employees);
+
             colId.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmployeeID()));
             colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmployeeName()));
             colContact.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmployeeContact()));
             colAddress.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAddress()));
             colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmployeeStatus()));
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private void updateEmployee(EmployeeDto employeeDto) {
@@ -164,20 +177,18 @@ public class EmployeeViewController implements Initializable {
             reloadEmployeeTable();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void deleteEmployee(String id) throws SQLException, ClassNotFoundException {
-        employeeViewDAOImpl.delete(id);
+        employeeViewBO.delete(id);
     }
 
     private void loadSalaryTable() {
         try {
-            ObservableList<SalaryDto> salaries = employeeViewDAOImpl.loadSalaryTable();
+            ObservableList<SalaryDto> salaries = employeeViewBO.loadSalaryTable();
             tableSalary.setItems(salaries);
 
             colSalaryId.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSalaryId()));
