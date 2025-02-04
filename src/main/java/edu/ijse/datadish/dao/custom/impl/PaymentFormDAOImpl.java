@@ -49,7 +49,14 @@ public class PaymentFormDAOImpl implements PaymentFormDAO {
 
     @Override
     public String generateNewId() throws SQLException, ClassNotFoundException {
-        return "";
+        ResultSet rst = SQLUtil.execute("SELECT NotificationID FROM notification ORDER BY NotificationID DESC LIMIT 1");
+        if (rst.next()) {
+            String lastID = rst.getString("NotificationID");
+            int number = Integer.parseInt(lastID.substring(1));
+            return String.format("N%03d", number + 1);
+        } else {
+            return "N001";
+        }
     }
 
     @Override

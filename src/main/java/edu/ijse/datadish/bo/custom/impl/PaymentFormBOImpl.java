@@ -3,10 +3,7 @@ package edu.ijse.datadish.bo.custom.impl;
 import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.bo.custom.PaymentFormBo;
 import edu.ijse.datadish.dao.DAOFactory;
-import edu.ijse.datadish.dao.custom.impl.MenuDAOImpl;
-import edu.ijse.datadish.dao.custom.impl.PaymentDAOImpl;
-import edu.ijse.datadish.dao.custom.impl.QuoryDAOImpl;
-import edu.ijse.datadish.dao.custom.impl.TableViewDAOImpl;
+import edu.ijse.datadish.dao.custom.impl.*;
 import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.dto.OrderItemDto;
@@ -29,6 +26,7 @@ public class PaymentFormBOImpl implements PaymentFormBo {
     TableViewDAOImpl tableViewDAO = (TableViewDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.TABLE_VIEW);
     MenuDAOImpl menuDAO = (MenuDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.MENU);
     PaymentDAOImpl paymentDAO = (PaymentDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT);
+    PaymentFormDAOImpl paymentFormDAO = (PaymentFormDAOImpl)  DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT_FORM);
 
     public List<OrderItemDto> getItemDetails(String orderId) throws SQLException, ClassNotFoundException {
         List<OrderItem> orderItem = quoryDAO.getItemDetails(orderId);
@@ -81,8 +79,6 @@ public class PaymentFormBOImpl implements PaymentFormBo {
     }
 
     public String[] generateNextIDs() throws SQLException, ClassNotFoundException {
-        String nextPayID = null;
-        String nextNotificationID = null;
         Connection connection = DBConnection.getInstance().getConnection();
 
         if (connection == null) {
@@ -93,34 +89,13 @@ public class PaymentFormBOImpl implements PaymentFormBo {
         connection.setAutoCommit(false);
 
         try {
-            System.out.println("Generating Payment ID...");
-            String payQuery = "SELECT PaymentID FROM payment ORDER BY PaymentID DESC LIMIT 1";
-            try (PreparedStatement payStatement = connection.prepareStatement(payQuery);
-                 ResultSet payResultSet = payStatement.executeQuery()) {
+            String nextPayID = paymentDAO.generateNewId();
+            String nextNotificationID = paymentFormDAO.generateNewId();
 
-                if (payResultSet.next()) {
-                    String lastID = payResultSet.getString("PaymentID");
-                    int number = Integer.parseInt(lastID.substring(1));
-                    nextPayID = String.format("P%03d", number + 1);
-                } else {
-                    nextPayID = "P001";
-                }
-                System.out.println("New Payment ID: " + nextPayID);
-            }
-
-            System.out.println("Generating Notification ID...");
-            String notificationQuery = "SELECT NotificationID FROM notification ORDER BY NotificationID DESC LIMIT 1";
-            try (PreparedStatement notificationStatement = connection.prepareStatement(notificationQuery);
-                 ResultSet notificationResultSet = notificationStatement.executeQuery()) {
-
-                if (notificationResultSet.next()) {
-                    String lastID = notificationResultSet.getString("NotificationID");
-                    int number = Integer.parseInt(lastID.substring(1));
-                    nextNotificationID = String.format("N%03d", number + 1);
-                } else {
-                    nextNotificationID = "N001";
-                }
-                System.out.println("New Notification ID: " + nextNotificationID);
+            if (nextPayID == null || nextNotificationID == null) {
+                System.out.println("Failed to generate IDs. Rolling back...");
+                connection.rollback();
+                return null;
             }
 
             connection.commit();
@@ -128,8 +103,8 @@ public class PaymentFormBOImpl implements PaymentFormBo {
 
         } catch (SQLException e) {
             connection.rollback();
-            System.out.println("SQL Exception: " + e.getMessage());
-            return null;
+            throw e;
+
         } finally {
             connection.setAutoCommit(true);
         }

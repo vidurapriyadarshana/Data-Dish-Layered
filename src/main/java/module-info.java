@@ -4,11 +4,11 @@ module edu.ijse.restaurant {
     requires java.sql;
     requires static lombok;
     requires mysql.connector.j;
-    requires java.desktop;
     requires net.sf.jasperreports.core;
     requires java.mail;
     requires jbcrypt;
     requires modelmapper;
+    requires org.apache.poi.poi;
 
 
     opens edu.ijse.datadish.controller to javafx.fxml;

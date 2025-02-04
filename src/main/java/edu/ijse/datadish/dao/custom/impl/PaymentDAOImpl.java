@@ -4,6 +4,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.PaymentDAO;
 import edu.ijse.datadish.entity.Payment;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -36,7 +37,14 @@ public class PaymentDAOImpl implements PaymentDAO {
 
     @Override
     public String generateNewId() throws SQLException, ClassNotFoundException {
-        return "";
+        ResultSet rst = SQLUtil.execute("SELECT PaymentID FROM payment ORDER BY PaymentID DESC LIMIT 1");
+        if (rst.next()) {
+            String lastID = rst.getString("PaymentID");
+            int number = Integer.parseInt(lastID.substring(1));
+            return String.format("P%03d", number + 1);
+        } else {
+            return "P001";
+        }
     }
 
     @Override
