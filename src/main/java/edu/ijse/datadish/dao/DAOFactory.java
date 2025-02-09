@@ -28,7 +28,6 @@ public class DAOFactory {
         LOGIN,
         PAYMENT_FORM,
         QUERY,
-        REPORT,
         TABLE_VIEW,
         UPDATE_EMPLOYEE,
         CUSTOMER,
@@ -68,8 +67,6 @@ public class DAOFactory {
                 return new PaymentFormDAOImpl();
             case QUERY:
                 return new QuoryDAOImpl();
-            case REPORT:
-                return new ReportDAOImpl();
             case TABLE_VIEW:
                 return new TableViewDAOImpl();
             case UPDATE_EMPLOYEE:
@@ -88,5 +85,4 @@ public class DAOFactory {
                 return null;
         }
     }
-
 }

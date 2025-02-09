@@ -32,7 +32,6 @@ public class BOFactory {
         PAYMENT,
         PAYMENT_FORM,
         QUARY,
-        REPORTS,
         TABLE_VIEW,
         UPDATE_EMPLOYEE,
         NOTIFICATION
@@ -57,7 +56,6 @@ public class BOFactory {
             case PAYMENT -> new PaymentBOImpl();
             case PAYMENT_FORM -> new PaymentFormBOImpl();
             case QUARY -> new QuoryBOImpl();
-            case REPORTS -> new ReportBOImpl();
             case TABLE_VIEW -> new TableViewBOImpl();
             case UPDATE_EMPLOYEE -> new UpdateEmployeeBOImpl();
             case NOTIFICATION -> new NotificationBOImpl();
