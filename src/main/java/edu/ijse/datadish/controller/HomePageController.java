@@ -233,7 +233,6 @@ public class HomePageController implements Initializable {
         if (isOrderSaved) {
             System.out.println("Order saved successfully!");
             resetForm();
-            System.out.println("Failed to save the order.");
         }
     }
 
@@ -261,6 +260,7 @@ public class HomePageController implements Initializable {
         try {
             loadMenuItems();
             lblOrderId.setText(orderBO.generateNewId());
+            System.out.println("Order ID: " + lblOrderId.getText());
             customerId = customerBO.generateNewId();
             loadTableIds();
         } catch (SQLException | ClassNotFoundException e) {

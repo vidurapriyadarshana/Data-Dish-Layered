@@ -21,7 +21,7 @@ public class QuoryDAOImpl implements QuoryDAO {
         List<OrderTable> orderList = new ArrayList<>();
 
         ResultSet resultSet = SQLUtil.execute("SELECT o.OrderID,o.TableID,o.TotalAmount,o.CustomerID,m.status FROM orders o JOIN menuorderitem m\n" +
-                "ON o.OrderID = m.OrderID WHERE m.status = 'incomplete' GROUP BY o.OrderID ORDER BY o.OrderID;");
+                "ON o.OrderID = m.OrderID WHERE m.status = 'incomplete' GROUP BY o.OrderID ORDER BY o.OrderID");
 
         while (resultSet.next()) {
             OrderTable order = new OrderTable();

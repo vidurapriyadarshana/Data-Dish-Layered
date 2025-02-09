@@ -23,68 +23,135 @@ public class HomePageBOImpl implements HomePageBO {
     MenuDAOImpl menuDAOIMPL = (MenuDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.MENU);
     TableViewDAOImpl tableViewDAOImpl = (TableViewDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.TABLE_VIEW);
 
-    public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, CustomerDTO customerDto, TableDto tableDto) throws SQLException, ClassNotFoundException {
+//    public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, CustomerDTO customerDto, TableDto tableDto) throws SQLException, ClassNotFoundException {
+//
+//        Connection connection = null;
+//
+//        try {
+//            connection = DBConnection.getInstance().getConnection();
+//            connection.setAutoCommit(false);
+//
+//            Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
+//            Order order = DTOConverter.toEntity(orderDto, Order.class);
+//            Table table = DTOConverter.toEntity(tableDto, Table.class);
+//            table.setStatus("Reserved");
+//
+//            boolean customerAdded = customerDAOImpl.save(customer);
+//            System.out.println("Customer Added: " + customerAdded);
+//
+//            if (!customerAdded) {
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            System.out.println(order.getOrderId());
+//
+//            boolean orderAdded = orderDAOImpl.save(order);
+//
+//            System.out.println("Order Added: " + orderAdded);
+//
+//            if (!orderAdded) {
+//                connection.rollback();
+//                return false;
+//            }
+//
+////            Order orderEntity = DTOConverter.toEntity(orderDto, Order.class);
+////            OrderItem orderItem = DTOConverter.toEntity(orderItemsDto, OrderItem.class);
+//            Order orderEntity = new Order();
+//            OrderItem orderItem = new OrderItem();
+//
+//
+//            boolean menuAdded = menuDAOIMPL.save(orderItem, orderEntity);
+//            System.out.println("Menu Added: " + menuAdded);
+//
+//            if (!menuAdded) {
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            boolean tableAdded = tableViewDAOImpl.updateTable(table);
+//            System.out.println("Table Added: " + tableAdded);
+//            if (!tableAdded) {
+//                connection.rollback();
+//                return false;
+//            }
+//
+//            connection.commit();
+//            return true;
+//
+//        } catch (SQLException e) {
+//            if (connection != null) {
+//                connection.rollback();
+//            }
+//            throw e;
+//        } finally {
+//            if (connection != null) {
+//                connection.setAutoCommit(true);
+//            }
+//        }
+//    }
 
-        Connection connection = null;
+public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, CustomerDTO customerDto, TableDto tableDto) throws SQLException, ClassNotFoundException {
+    Connection connection = null;
 
-        try {
-            connection = DBConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
+    try {
+        connection = DBConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
 
-            Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
-            Order order = DTOConverter.toEntity(orderDto, Order.class);
-            Table table = DTOConverter.toEntity(tableDto, Table.class);
-            table.setStatus("Reserved");
+        // Save customer
+        Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
+        boolean customerAdded = customerDAOImpl.save(customer);
+        System.out.println("Customer Added: " + customerAdded);
+        if (!customerAdded) {
+            connection.rollback();
+            return false;
+        }
 
-            boolean customerAdded = customerDAOImpl.save(customer);
-            System.out.println("Customer Added: " + customerAdded);
+        // Save order
+        Order order = DTOConverter.toEntity(orderDto, Order.class);
+        boolean orderAdded = orderDAOImpl.save(order);
+        System.out.println("Order Added: " + orderAdded);
+        if (!orderAdded) {
+            connection.rollback();
+            return false;
+        }
 
-            if (!customerAdded) {
+        // Save menu order items
+        for (OrderItemDto itemDto : orderItemsDto) {
+            OrderItem orderItem = DTOConverter.toEntity(itemDto, OrderItem.class);
+            boolean menuAdded = menuDAOIMPL.save(orderItem, order);
+            System.out.println("Menu Added: " + menuAdded);
+            if (!menuAdded) {
                 connection.rollback();
                 return false;
-            }
-
-            boolean orderAdded = orderDAOImpl.save(order);
-            System.out.println("Order Added: " + orderAdded);
-
-            if (!orderAdded) {
-                connection.rollback();
-                return false;
-            }
-
-            for (OrderItemDto item : orderItemsDto) {
-                Order orderEntity = DTOConverter.toEntity(item, Order.class);
-                OrderItem orderItem = DTOConverter.toEntity(item, OrderItem.class);
-
-                boolean menuAdded = menuDAOIMPL.save(orderItem, orderEntity);
-                System.out.println("Menu Added: " + menuAdded);
-                if (!menuAdded) {
-                    connection.rollback();
-                    return false;
-                }
-            }
-
-            boolean tableAdded = tableViewDAOImpl.updateTable(table);
-            System.out.println("Table Added: " + tableAdded);
-            if (!tableAdded) {
-                connection.rollback();
-                return false;
-            }
-
-            connection.commit();
-            return true;
-
-        } catch (SQLException e) {
-            if (connection != null) {
-                connection.rollback();
-            }
-            throw e;
-        } finally {
-            if (connection != null) {
-                connection.setAutoCommit(true);
             }
         }
+
+        // Update table status
+        Table table = DTOConverter.toEntity(tableDto, Table.class);
+        table.setStatus("Reserved");
+        boolean tableUpdated = tableViewDAOImpl.updateTable(table);
+        System.out.println("Table Updated: " + tableUpdated);
+        if (!tableUpdated) {
+            connection.rollback();
+            return false;
+        }
+
+        // Commit transaction
+        connection.commit();
+        return true;
+
+    } catch (SQLException e) {
+        if (connection != null) {
+            connection.rollback();
+        }
+        throw e;
+    } finally {
+        if (connection != null) {
+            connection.setAutoCommit(true);
+        }
     }
+}
 
     public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
         return false;

@@ -1,7 +1,9 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.CustomerDAO;
+import edu.ijse.datadish.dto.CustomerDTO;
 import edu.ijse.datadish.entity.Customer;
 
 import java.sql.ResultSet;
@@ -17,7 +19,18 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean save(Customer dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)", dto.getCustomerID(), dto.getName(), dto.getContact());
+        Customer customer = DTOConverter.toEntity(dto, Customer.class);
+        return SQLUtil.execute("INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)", customer.getCustomerID(), customer.getName(), customer.getContact());
+    }
+
+//    @Override
+//    public boolean save(Customer dto) throws SQLException, ClassNotFoundException {
+//        return SQLUtil.execute("INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)", dto.getCustomerID(), dto.getName(), dto.getContact());
+//    }
+
+    public boolean save(CustomerDTO customerDto) throws SQLException, ClassNotFoundException {
+        Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
+        return SQLUtil.execute("INSERT INTO customer (CustomerID, Name, Contact) VALUES (?,?,?)", customer.getCustomerID(), customer.getName(), customer.getContact());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.MenuDAO;
 import edu.ijse.datadish.dto.FoodDto;
@@ -43,11 +44,25 @@ public class MenuDAOImpl implements MenuDAO {
         return false;
     }
 
-    public boolean save(OrderItem item, Order orderDto) throws SQLException, ClassNotFoundException {
-        String query = "INSERT INTO menuorderitem(MenuItemID, OrderID, Qty) VALUES (?,?,?)";
-        Object[] params = { item.getFoodId(), orderDto.getOrderId(), item.getQuantity() };
+//    public boolean save(OrderItem item, Order orderDto) throws SQLException, ClassNotFoundException {
+//        String query = "INSERT INTO menuorderitem(MenuItemID, OrderID, Qty) VALUES (?,?,?)";
+//        Object[] params = { item.getFoodId(), orderDto.getOrderId(), item.getQuantity() };
+//
+//        return SQLUtil.execute(query, params);
+//    }
 
-        return SQLUtil.execute(query, params);
+    public boolean save(OrderItemDto itemDto, OrderDto orderDto) throws SQLException, ClassNotFoundException {
+        OrderItem orderItem = DTOConverter.toEntity(itemDto, OrderItem.class);
+        Order order = DTOConverter.toEntity(orderDto, Order.class);
+        return SQLUtil.execute("INSERT INTO menuorderitem(MenuItemID, OrderID, Qty) VALUES (?,?,?)", orderItem.getFoodId(), order.getOrderId(), orderItem.getQuantity());
+    }
+
+    @Override
+    public boolean save(OrderItem item, Order orderDto) throws SQLException, ClassNotFoundException {
+
+        OrderItem orderItem = DTOConverter.toEntity(item, OrderItem.class);
+        Order order = DTOConverter.toEntity(orderDto, Order.class);
+        return SQLUtil.execute("INSERT INTO menuorderitem(MenuItemID, OrderID, Qty) VALUES (?,?,?)", orderItem.getFoodId(), order.getOrderId(), orderItem.getQuantity());
     }
 
     @Override

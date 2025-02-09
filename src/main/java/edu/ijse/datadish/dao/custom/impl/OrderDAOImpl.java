@@ -1,9 +1,12 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.OrderDAO;
+import edu.ijse.datadish.dto.OrderDto;
 import edu.ijse.datadish.entity.Order;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,8 +20,21 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public boolean save(Order dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)" ,
-                dto.getOrderId(), dto.getCustomerId(), dto.getTableId(), dto.getOrderDate(), dto.getTotalAmount(), dto.getEmployeeId());
+        Order order = DTOConverter.toEntity(dto, Order.class);
+        return SQLUtil.execute("INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)",
+                order.getOrderId(), order.getCustomerId(), order.getTableId(), Date.valueOf(order.getOrderDate()), order.getTotalAmount(), order.getEmployeeId());
+    }
+
+//    @Override
+//    public boolean save(Order dto) throws SQLException, ClassNotFoundException {
+//        return SQLUtil.execute("INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)" ,
+//                dto.getOrderId(), dto.getCustomerId(), dto.getTableId(), dto.getOrderDate(), dto.getTotalAmount(), dto.getEmployeeId());
+//    }
+
+    public boolean save(OrderDto orderDto) throws SQLException, ClassNotFoundException {
+        Order order = DTOConverter.toEntity(orderDto, Order.class);
+        return SQLUtil.execute("INSERT INTO orders (OrderID, CustomerID, TableID, Date, TotalAmount, EmployeeID) VALUES (?,?,?,?,?,?)",
+                order.getOrderId(), order.getCustomerId(), order.getTableId(), Date.valueOf(order.getOrderDate()), order.getTotalAmount(), order.getEmployeeId());
     }
 
     @Override

@@ -41,9 +41,16 @@ public class CheckoutController {
         try {
             ordersGrid.getChildren().clear();
 
+            System.out.println("Loading orders...");
+
             List<OrderTableDto> orders = quoryBO.loadIncompleteOrders();
+            if (orders.isEmpty()) {
+                showInfo("No orders to display");
+                return;
+            }
             int row = 0;
             int column = 0;
+
 
             for (OrderTableDto order : orders) {
                 VBox orderDetails = createOrderDetailsVBox(order);

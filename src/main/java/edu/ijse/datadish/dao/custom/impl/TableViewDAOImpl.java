@@ -1,7 +1,9 @@
 package edu.ijse.datadish.dao.custom.impl;
 
+import edu.ijse.datadish.bo.DTOConverter;
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.TableViewDAO;
+import edu.ijse.datadish.dto.TableDto;
 import edu.ijse.datadish.entity.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -65,8 +67,9 @@ public class TableViewDAOImpl implements TableViewDAO {
         return null;
     }
 
-    public boolean updateTable(Table tableDto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
+    public boolean updateTable(TableDto tableDto) throws SQLException, ClassNotFoundException {
+        Table table = DTOConverter.toEntity(tableDto, Table.class);
+        return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", table.getStatus(), table.getId());
     }
 
     public void update(Table tableDto) throws SQLException, ClassNotFoundException {
@@ -75,6 +78,11 @@ public class TableViewDAOImpl implements TableViewDAO {
 
 
     public boolean updateTrnsaction(Table tableDto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
+    }
+
+    @Override
+    public boolean updateTable(Table tableDto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
     }
 
