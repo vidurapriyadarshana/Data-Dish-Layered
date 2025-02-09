@@ -1,6 +1,7 @@
 package edu.ijse.datadish.controller;
 
 import edu.ijse.datadish.bo.BOFactory;
+import edu.ijse.datadish.bo.custom.TableViewBO;
 import edu.ijse.datadish.bo.custom.impl.CustomerBOImpl;
 import edu.ijse.datadish.bo.custom.impl.HomePageBOImpl;
 import edu.ijse.datadish.bo.custom.impl.OrderBOImpl;
@@ -79,7 +80,7 @@ public class HomePageController implements Initializable {
     private final HomePageBOImpl homePageBO = (HomePageBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.HOME_PAGE);
     private final OrderBOImpl orderBO = (OrderBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ORDERS);
     private final CustomerBOImpl customerBO = (CustomerBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
-    private final TableViewBOImpl tableViewBO = (TableViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.TABLE_VIEW);
+    private TableViewBOImpl tableViewBO = (TableViewBOImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.TABLE_VIEW);
 
     private void loadMenuItems() throws SQLException, ClassNotFoundException {
         List<FoodDto> foodItems = homePageBO.getAll();
@@ -161,6 +162,7 @@ public class HomePageController implements Initializable {
 
     @FXML
     void checkoutAction(ActionEvent event) throws SQLException, ClassNotFoundException {
+        System.out.println("Clicked");
         String orderId = lblOrderId.getText();
         String empId = lblEmpId.getText();
         String selectedTable = selectTable.getValue();
@@ -212,6 +214,7 @@ public class HomePageController implements Initializable {
         table.setId(selectedTable);
 
         boolean isOrderSaved = homePageBO.save(orderItems, order, customerDTO,table);
+
         if (isOrderSaved) {
             System.out.println("Order saved successfully!");
             resetForm();
@@ -238,6 +241,7 @@ public class HomePageController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         this.empId = Refarance.employeeID;
         try {
             loadMenuItems();
@@ -249,26 +253,25 @@ public class HomePageController implements Initializable {
         }
 
         lblEmpId.setText(empId);
-//        try {
-//            lblOrderId.setText(orderBO.generateNewId());
-//        } catch (SQLException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//        lblEmpId.setText(empId);
-//        try {
-//            customerId = customerBO.generateNewId();
-//        } catch (SQLException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-//            loadTableIds();
-//        } catch (SQLException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            lblOrderId.setText(orderBO.generateNewId());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        lblEmpId.setText(empId);
+        try {
+            customerId = customerBO.generateNewId();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            loadTableIds();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadTableIds() throws SQLException, ClassNotFoundException {
-        TableViewDAOImpl tableViewDAOImpl = new TableViewDAOImpl();
         ObservableList<TableDto> tableList = tableViewBO.getAvailableTables();
 
         ObservableList<String> tableIds = FXCollections.observableArrayList();
@@ -278,6 +281,7 @@ public class HomePageController implements Initializable {
 
         selectTable.setItems(tableIds);
     }
+
 
     public static String getCurrentDate() {
         LocalDate currentDate = LocalDate.now();

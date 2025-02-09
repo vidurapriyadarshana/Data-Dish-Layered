@@ -16,5 +16,6 @@ public interface LogInBO extends SuperBO {
     ArrayList<LogInDto> getAll() throws SQLException, ClassNotFoundException;
     boolean save(LogInDto dto) throws SQLException, ClassNotFoundException;
     void update(LogInDto logInDto) throws SQLException, ClassNotFoundException;
-
+    String getRole(LogInDto logInDto) throws SQLException, ClassNotFoundException;
+    String getID(String userName) throws SQLException, ClassNotFoundException;
 }

@@ -15,12 +15,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
-import edu.ijse.datadish.dao.custom.impl.LogInDAOImpl;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginController {
 
@@ -36,46 +35,52 @@ public class LoginController {
     @FXML
     private PasswordField txtpassword;
 
-    //private LogInDAOImpl logInDAOImpl = new LogInDAOImpl();
     private final LogInBoImpl logInBo = (LogInBoImpl) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.LOGIN);
-    private LogInDto logInDto = new LogInDto();
-
-    @FXML
-    public void initialize() {
-        txtUserName.setOnAction(event -> txtpassword.requestFocus());
-        txtpassword.setOnAction(this::LogInAction);
-    }
 
     @FXML
     void LogInAction(ActionEvent event) {
-        System.out.println("button clicked");
-        String userName = txtUserName.getText();
-        String password = txtpassword.getText();
+        String userName = txtUserName.getText().trim();
+        String password = txtpassword.getText().trim();
 
+        if (userName.isEmpty() || password.isEmpty()) {
+            showAlert("Login Failed", "Username or password cannot be empty.");
+            return;
+        }
+
+        LogInDto logInDto = new LogInDto();
         logInDto.setUserName(userName);
         logInDto.setPassword(password);
 
-
         try {
             boolean isLoggedIn = logInBo.checkLogin(logInDto);
+            if (isLoggedIn) {
+                String role = logInBo.getRole(logInDto);
+                String id = logInBo.getID(userName);
 
-            Refarance.employeeUserName = userName;
-            Refarance.employeeRole = logInDto.getRole();
+                Refarance.employeeUserName = userName;
+                Refarance.employeeID = id;
+                System.out.println(Refarance.employeeID);
+                Refarance.employeeRole = role;
 
-            String role = logInDto.getRole();
-            if (isLoggedIn && role.equals("Admin")) {
-                System.out.println("Successful Admin");
-                mainAnchor.getChildren().add(FXMLLoader.load(getClass().getResource("/view/AdminDash.fxml")));
-            }else if(isLoggedIn && role.equals("Employee")){
-                System.out.println("Successful Employee");
-                mainAnchor.getChildren().add(FXMLLoader.load(getClass().getResource("/view/EmployeeDash.fxml")));
-            }else {
-                System.out.println("Unsuccessful");
+                loadDashboard(role);
+            } else {
                 showAlert("Login Failed", "Invalid username or password.");
             }
-        } catch (Exception e) {
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            e.printStackTrace();
             showAlert("Error", "An error occurred: " + e.getMessage());
         }
+    }
+
+    private void loadDashboard(String role) throws IOException {
+        String fxmlPath = role.equals("Admin") ? "/view/AdminDash.fxml" : "/view/EmployeeDash.fxml";
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        Parent root = loader.load();
+
+        Stage stage = (Stage) mainAnchor.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     private void showAlert(String title, String message) {
@@ -87,14 +92,19 @@ public class LoginController {
     }
 
     @FXML
-    void forgotPassAction(MouseEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ForgotPassword.fxml"));
-        Parent load = loader.load();
+    void forgotPassAction(MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ForgotPassword.fxml"));
+            Parent root = loader.load();
 
-        Stage addItemStage = new Stage();
-        addItemStage.setTitle("Forgot Password");
-        addItemStage.setScene(new Scene(load));
-        addItemStage.initModality(Modality.NONE);
-        addItemStage.show();
+            Stage stage = new Stage();
+            stage.setTitle("Forgot Password");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Unable to open Forgot Password window.");
+        }
     }
 }

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class LogInDAOImpl implements LoginDAO {
 
+    LogIn logIn = new LogIn();
+
     public boolean exist(String email) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("SELECT Email FROM user WHERE Email = ?", email);
     }
@@ -31,7 +33,9 @@ public class LogInDAOImpl implements LoginDAO {
 
     @Override
     public LogIn search(String id) throws SQLException, ClassNotFoundException {
-        return null;
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM user WHERE Email = ?", id);
+        logIn.setRole(resultSet.getString("Role"));
+        return logIn;
     }
 
     @Override
@@ -48,6 +52,59 @@ public class LogInDAOImpl implements LoginDAO {
         SQLUtil.execute("UPDATE user SET Password = ? WHERE Email = ?", logInDto.getEmail(), logInDto.getPassword());
     }
 
+    @Override
+    public boolean getEmployeeID(String userName) throws SQLException, ClassNotFoundException {
+//        return SQLUtil.execute("SELECT EmployeeID FROM employee WHERE UserName = ?" , userName);
+        Connection connection = DBConnection.getInstance().getConnection();
+        PreparedStatement pstm = connection.prepareStatement("SELECT EmployeeID FROM employee WHERE UserName = ?");
+        pstm.setObject(1, userName);
+        ResultSet rst = pstm.executeQuery();
+        return rst.next();
+    }
+
+    @Override
+    public boolean getUserInfo(String userName) throws SQLException, ClassNotFoundException {
+//        return SQLUtil.execute("SELECT * FROM user WHERE UserName = ?", userName);
+
+        Connection connection = DBConnection.getInstance().getConnection();
+        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM user WHERE UserName = ?");
+        pstm.setObject(1, userName);
+        ResultSet rst = pstm.executeQuery();
+        return rst.next();
+
+    }
+
+    @Override
+    public String getRole(LogIn logIn) throws SQLException, ClassNotFoundException {
+        ResultSet rst = SQLUtil.execute("SELECT Role FROM user WHERE UserName = ?", logIn.getUserName());
+
+        if (rst.next()) {
+            return rst.getString("Role");
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String getID(String userName) throws SQLException, ClassNotFoundException {
+//        ResultSet rst = SQLUtil.execute("SELECT EmployeeID FROM EMPLOYEE WHERE UserName = ?", logIn.getUserName());
+//
+//        if (rst.next()) {
+//            return rst.getString("EmployeeID");
+//        } else {
+//            return null;
+//        }
+
+        Connection connection = DBConnection.getInstance().getConnection();
+        PreparedStatement pstm = connection.prepareStatement("SELECT EmployeeID FROM EMPLOYEE WHERE UserName = ?");
+        pstm.setObject(1, userName);
+        ResultSet rst = pstm.executeQuery();
+        if (rst.next()) {
+            return rst.getString("EmployeeID");
+        } else {
+            return null;
+        }
+    }
 
 
 }

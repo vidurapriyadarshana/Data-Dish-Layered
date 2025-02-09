@@ -23,7 +23,7 @@ public class LogInBoImpl implements LogInBO {
         connection.setAutoCommit(false);
 
         try {
-            boolean userInfo = employeeViewDAO.getUserInfo(logInDto.getUserName());
+            boolean userInfo = logInDAO.getUserInfo(logInDto.getUserName());
 
             if (!userInfo) {
                 connection.rollback();
@@ -31,7 +31,7 @@ public class LogInBoImpl implements LogInBO {
             }
 
 
-            boolean employee = employeeViewDAO.getEmployeeID(logInDto.getUserName());
+            boolean employee = logInDAO.getEmployeeID(logInDto.getUserName());
 
             if (!employee) {
                 connection.rollback();
@@ -76,6 +76,17 @@ public class LogInBoImpl implements LogInBO {
     public void update(LogInDto logInDto) throws SQLException, ClassNotFoundException {
         LogIn logIn = DTOConverter.toEntity(logInDto, LogIn.class);
         logInDAO.update(logIn);
+    }
+
+    @Override
+    public String getRole(LogInDto logInDto) throws SQLException, ClassNotFoundException {
+        LogIn logIn = DTOConverter.toEntity(logInDto, LogIn.class);
+        return logInDAO.getRole(logIn);
+    }
+
+    @Override
+    public String getID(String userName) throws SQLException, ClassNotFoundException {
+        return logInDAO.getID(userName);
     }
 
 }

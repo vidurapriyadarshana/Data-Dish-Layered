@@ -2,17 +2,14 @@ package edu.ijse.datadish.dao.custom.impl;
 
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.TableViewDAO;
-import edu.ijse.datadish.dto.TableDto;
-import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.entity.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableViewDAOImpl implements TableViewDAO {
 
@@ -39,10 +36,20 @@ public class TableViewDAOImpl implements TableViewDAO {
 
 
     public ObservableList<Table> getAvailableTables() throws SQLException, ClassNotFoundException {
-        ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo WHERE Status = 'Available'");
         ObservableList<Table> tableList = FXCollections.observableArrayList();
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM tableinfo WHERE Status = 'Available'");
+
+        while (resultSet.next()) {
+            tableList.add(new Table(
+                    resultSet.getString("TableID"),
+                    resultSet.getString("Status"),
+                    resultSet.getInt("Capacity")
+            ));
+        }
+
         return tableList;
     }
+
 
     public void delete(String tableId) throws SQLException, ClassNotFoundException {
         SQLUtil.execute("DELETE FROM tableinfo WHERE TableID = ?", tableId);
