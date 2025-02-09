@@ -65,9 +65,14 @@ public class TableViewDAOImpl implements TableViewDAO {
         return null;
     }
 
-    public void update(Table tableDto) throws SQLException, ClassNotFoundException {
-        SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
+    public boolean updateTable(Table tableDto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());
     }
+
+    public void update(Table tableDto) throws SQLException, ClassNotFoundException {
+        
+    }
+
 
     public boolean updateTrnsaction(Table tableDto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE tableinfo SET Status = ? WHERE TableID = ?", tableDto.getStatus(), tableDto.getId());

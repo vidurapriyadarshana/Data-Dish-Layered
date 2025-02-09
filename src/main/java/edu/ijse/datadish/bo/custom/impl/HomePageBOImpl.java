@@ -36,12 +36,18 @@ public class HomePageBOImpl implements HomePageBO {
             Table table = DTOConverter.toEntity(tableDto, Table.class);
             table.setStatus("Reserved");
 
-            if (!customerDAOImpl.save(customer)) {
+            boolean customerAdded = customerDAOImpl.save(customer);
+            System.out.println("Customer Added: " + customerAdded);
+
+            if (!customerAdded) {
                 connection.rollback();
                 return false;
             }
 
-            if (!orderDAOImpl.save(order)) {
+            boolean orderAdded = orderDAOImpl.save(order);
+            System.out.println("Order Added: " + orderAdded);
+
+            if (!orderAdded) {
                 connection.rollback();
                 return false;
             }
@@ -51,13 +57,16 @@ public class HomePageBOImpl implements HomePageBO {
                 OrderItem orderItem = DTOConverter.toEntity(item, OrderItem.class);
 
                 boolean menuAdded = menuDAOIMPL.save(orderItem, orderEntity);
+                System.out.println("Menu Added: " + menuAdded);
                 if (!menuAdded) {
                     connection.rollback();
                     return false;
                 }
             }
 
-            if (!tableViewDAOImpl.save(table)) {
+            boolean tableAdded = tableViewDAOImpl.updateTable(table);
+            System.out.println("Table Added: " + tableAdded);
+            if (!tableAdded) {
                 connection.rollback();
                 return false;
             }

@@ -10,4 +10,5 @@ import java.sql.SQLException;
 public interface TableViewDAO extends CrudDAO<Table> {
     ObservableList<Table> getAvailableTables() throws SQLException, ClassNotFoundException;
     boolean updateTrnsaction(Table tableDto) throws SQLException, ClassNotFoundException;
+    boolean updateTable(Table tableDto) throws SQLException, ClassNotFoundException;
 }

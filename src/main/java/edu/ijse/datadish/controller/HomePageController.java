@@ -171,6 +171,8 @@ public class HomePageController implements Initializable {
         String customerName = txtCustomerName.getText();
         String customerContact = txtCustomerContact.getText();
 
+        System.out.println("Clicked1");
+
         if (customerName.isEmpty() || customerContact.isEmpty()) {
             showAlert("Error", "Please enter customer name and contact.");
             return;
@@ -181,6 +183,8 @@ public class HomePageController implements Initializable {
             showAlert("Error", "Cart is empty.");
             return;
         }
+
+        System.out.println("Clicked2");
 
         List<OrderItemDto> orderItems = cartItems.entrySet().stream()
                 .map(entry -> {
@@ -195,6 +199,8 @@ public class HomePageController implements Initializable {
                 })
                 .toList();
 
+        System.out.println("Clicked3");
+
         OrderDto order = new OrderDto();
         order.setCustomerId(customerId);
         order.setOrderId(orderId);
@@ -205,15 +211,24 @@ public class HomePageController implements Initializable {
         order.setCustomerName(customerName);
         order.setCustomerContact(customerContact);
 
+        System.out.println("Clicked4");
+
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setCustomerID(customerId);
         customerDTO.setName(customerName);
         customerDTO.setContact(customerContact);
 
+        System.out.println("Clicked5");
+
         TableDto table = new TableDto();
         table.setId(selectedTable);
 
+        System.out.println("Clicked6");
+
         boolean isOrderSaved = homePageBO.save(orderItems, order, customerDTO,table);
+
+        System.out.println("Clicked7");
+        System.out.println(isOrderSaved);
 
         if (isOrderSaved) {
             System.out.println("Order saved successfully!");
@@ -253,22 +268,22 @@ public class HomePageController implements Initializable {
         }
 
         lblEmpId.setText(empId);
-        try {
-            lblOrderId.setText(orderBO.generateNewId());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        lblEmpId.setText(empId);
-        try {
-            customerId = customerBO.generateNewId();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            loadTableIds();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            lblOrderId.setText(orderBO.generateNewId());
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        lblEmpId.setText(empId);
+//        try {
+//            customerId = customerBO.generateNewId();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        try {
+//            loadTableIds();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void loadTableIds() throws SQLException, ClassNotFoundException {
