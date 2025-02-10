@@ -111,6 +111,13 @@ public class PaymentFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            nextIDs = paymentFormBO.generateNextIDs();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         lblpaymentID.setText(nextIDs[0]);
         this.paymentId = lblpaymentID.getText();
 

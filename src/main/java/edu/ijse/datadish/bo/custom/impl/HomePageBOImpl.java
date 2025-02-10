@@ -98,7 +98,6 @@ public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, Custome
         connection = DBConnection.getInstance().getConnection();
         connection.setAutoCommit(false);
 
-        // Save customer
         Customer customer = DTOConverter.toEntity(customerDto, Customer.class);
         boolean customerAdded = customerDAOImpl.save(customer);
         System.out.println("Customer Added: " + customerAdded);
@@ -107,7 +106,6 @@ public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, Custome
             return false;
         }
 
-        // Save order
         Order order = DTOConverter.toEntity(orderDto, Order.class);
         boolean orderAdded = orderDAOImpl.save(order);
         System.out.println("Order Added: " + orderAdded);
@@ -116,7 +114,6 @@ public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, Custome
             return false;
         }
 
-        // Save menu order items
         for (OrderItemDto itemDto : orderItemsDto) {
             OrderItem orderItem = DTOConverter.toEntity(itemDto, OrderItem.class);
             boolean menuAdded = menuDAOIMPL.save(orderItem, order);
@@ -127,7 +124,6 @@ public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, Custome
             }
         }
 
-        // Update table status
         Table table = DTOConverter.toEntity(tableDto, Table.class);
         table.setStatus("Reserved");
         boolean tableUpdated = tableViewDAOImpl.updateTable(table);
@@ -137,7 +133,6 @@ public boolean save(List<OrderItemDto> orderItemsDto, OrderDto orderDto, Custome
             return false;
         }
 
-        // Commit transaction
         connection.commit();
         return true;
 

@@ -110,7 +110,7 @@ public class CheckoutController {
         }
     }
 
-    private void handleCompleteOrder(OrderTableDto order) {
+    public void handleCompleteOrder(OrderTableDto order) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/PaymentForm.fxml"));
             Parent root = loader.load();
@@ -122,9 +122,7 @@ public class CheckoutController {
             stage.setTitle("Complete Payment");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-
             loadOrders();
-
         } catch (Exception e) {
             showError("Failed to open payment form: " + e.getMessage());
         }
