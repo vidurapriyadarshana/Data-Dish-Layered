@@ -95,25 +95,63 @@ public class AddEmployeeSalaryController implements Initializable {
     }
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            lblSalaryID.setText(addSalary.generateNewId());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        try {
+//            lblSalaryID.setText(addSalary.generateNewId());
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+//
+////        try {
+////            List<EmployeeDto> employeeList = addSalary.getAll();
+////            ObservableList<EmployeeDto> employees = FXCollections.observableArrayList(employeeList);
+////
+////            chooseEmployee.getItems().addAll(String.valueOf(employees));
+////        } catch (SQLException | ClassNotFoundException e) {
+////            throw new RuntimeException(e);
+////        }
+//
+//        try {
+//            List<EmployeeDto> employeeList = addSalary.getAll();
+//            ObservableList<EmployeeDto> employees = FXCollections.observableArrayList(employeeList);
+//
+//            chooseEmployee.setItems(employees);
+//        } catch (SQLException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//            showAlert("Database Error", "Failed to fetch employee data: " + e.getMessage());
+//        }
+//
+//
+//
+//    }
 
-        try {
-            List<EmployeeDto> employeeList = addSalary.getAll();
-            ObservableList<EmployeeDto> employees = FXCollections.observableArrayList(employeeList); // Convert to ObservableList
 
-            chooseEmployee.getItems().addAll(String.valueOf(employees));
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
+@Override
+public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+        lblSalaryID.setText(addSalary.generateNewId());
+    } catch (SQLException | ClassNotFoundException e) {
+        throw new RuntimeException(e);
     }
+
+    lblDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+    try {
+//        List<EmployeeDto> employeeList = addSalary.getAll();
+//
+//        // Convert List<EmployeeDto> to List<String> using toString()
+//        ObservableList<String> employees = FXCollections.observableArrayList(employeeList.toString());
+//
+//        chooseEmployee.setItems(employees);
+        chooseEmployee.getItems().addAll(addSalary.getEmployeeNames());
+    } catch (SQLException | ClassNotFoundException e) {
+        e.printStackTrace();
+        showAlert("Database Error", "Failed to fetch employee data: " + e.getMessage());
+    }
+}
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

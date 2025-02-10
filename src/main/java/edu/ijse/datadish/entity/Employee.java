@@ -25,4 +25,14 @@ public class Employee {
     public Employee(String name) {
         this.employeeName = name;
     }
+
+    public Employee(String employeeID, String name, String address, String contact, String email, String hireDate, String status) {
+        this.employeeID = employeeID;
+        this.employeeName = name;
+        this.address = address;
+        this.employeeContact = contact;
+        this.email = email;
+        this.hireDate = hireDate;
+        this.employeeStatus = status;
+    }
 }

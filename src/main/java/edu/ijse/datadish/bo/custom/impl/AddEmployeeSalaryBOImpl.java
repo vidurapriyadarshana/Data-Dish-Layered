@@ -11,22 +11,29 @@ import edu.ijse.datadish.entity.Salary;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddEmployeeSalaryBOImpl implements AddEmployeeSalaryBO {
 
     AddEmployeeSalaryDAOImpl addEmployeeSalaryDAO = (AddEmployeeSalaryDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.ADD_EMPLOYEE_SALARY);
 
+//    public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
+//        ArrayList<Employee> employees = addEmployeeSalaryDAO.getAll();
+//
+//        ArrayList<EmployeeDto> employeeDtos = new ArrayList<>();
+//
+//        for (Employee employee : employees) {
+//            employeeDtos.add(DTOConverter.toDTO(employee, EmployeeDto.class));
+//        }
+//
+//        return employeeDtos;
+//    }
+
     public ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
         ArrayList<Employee> employees = addEmployeeSalaryDAO.getAll();
-
-        ArrayList<EmployeeDto> employeeDtos = new ArrayList<>();
-
-        for (Employee employee : employees) {
-            employeeDtos.add(DTOConverter.toDTO(employee, EmployeeDto.class));
-        }
-
-        return employeeDtos;
+        return DTOConverter.toDTOList(employees, EmployeeDto.class);
     }
+
 
     public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
         return false;
@@ -61,4 +68,7 @@ public class AddEmployeeSalaryBOImpl implements AddEmployeeSalaryBO {
         return null;
     }
 
+    public List<String> getEmployeeNames() throws SQLException, ClassNotFoundException {
+        return addEmployeeSalaryDAO.getEmployeeNames();
+    }
 }

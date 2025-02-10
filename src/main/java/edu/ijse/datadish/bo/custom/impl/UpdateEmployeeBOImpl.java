@@ -45,7 +45,10 @@ public class UpdateEmployeeBOImpl implements UpdateEmployeeBO {
     }
 
     public String getEmployeeEmail(String employeeID) throws SQLException, ClassNotFoundException {
-        return updateEmployeeDAOImpl.getEmployeeEmail(employeeID);
+//        return updateEmployeeDAOImpl.getEmployeeEmail(employeeID);
+        String email = updateEmployeeDAOImpl.getEmployeeEmail(employeeID);
+        System.out.println(email);
+        return email;
     }
 
 }

@@ -2,29 +2,55 @@ package edu.ijse.datadish.dao.custom.impl;
 
 import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.AddEmployeeSalaryDAO;
+import edu.ijse.datadish.db.DBConnection;
 import edu.ijse.datadish.dto.EmployeeDto;
 import edu.ijse.datadish.dto.SalaryDto;
 import edu.ijse.datadish.entity.Employee;
 import edu.ijse.datadish.entity.Salary;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddEmployeeSalaryDAOImpl implements AddEmployeeSalaryDAO {
 
-    public ArrayList<Employee> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<Employee> employeeNames = new ArrayList<>();
+//    public ArrayList<Employee> getAll() throws SQLException, ClassNotFoundException {
+//        ArrayList<Employee> employeeNames = new ArrayList<>();
+//
+//        ResultSet rst = SQLUtil.execute("SELECT Name FROM employee");
+//
+//        if (rst != null) {
+//            while (rst.next()) {
+//                employeeNames.add(new Employee(rst.getString("Name")));
+//            }
+//        }
+//
+//        return employeeNames;
+//    }
 
-        ResultSet rst = SQLUtil.execute("SELECT Name FROM employee");
+    public ArrayList<Employee> getAll() throws SQLException, ClassNotFoundException {
+        ArrayList<Employee> employees = new ArrayList<>();
+
+        ResultSet rst = SQLUtil.execute("SELECT EmployeeID, Name, Address, Contact, Email, HireDate, Status FROM employee");
 
         if (rst != null) {
             while (rst.next()) {
-                employeeNames.add(new Employee(rst.getString("Name")));
+                employees.add(new Employee(
+                        rst.getString("EmployeeID"),
+                        rst.getString("Name"),
+                        rst.getString("Address"),
+                        rst.getString("Contact"),
+                        rst.getString("Email"),
+                        rst.getString("HireDate"),
+                        rst.getString("Status")
+                ));
             }
         }
 
-        return employeeNames;
+        return employees;
     }
 
 
@@ -70,6 +96,23 @@ public class AddEmployeeSalaryDAOImpl implements AddEmployeeSalaryDAO {
         }
 
         return null;
+    }
+
+    @Override
+    public List<String> getEmployeeNames() throws SQLException, ClassNotFoundException {
+//        String sql = "SELECT Name FROM employee";
+//        Connection connection = DBConnection.getInstance().getConnection();
+//        PreparedStatement statement = connection.prepareStatement(sql);
+//
+//        ResultSet resultSet = statement.executeQuery();
+        List<String> employeeNames = new ArrayList<>();
+//
+        ResultSet resultSet = SQLUtil.execute("SELECT Name FROM employee");
+        while (resultSet.next()) {
+            employeeNames.add(resultSet.getString("Name"));
+        }
+
+        return employeeNames;
     }
 
     public boolean save(Salary salaryDto) throws SQLException, ClassNotFoundException {

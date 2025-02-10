@@ -21,8 +21,12 @@ public class AddEmployeeDAOImpl implements AddEmployeeDAO {
 
     @Override
     public boolean save(Employee dto) throws SQLException, ClassNotFoundException {
+
+        System.out.println(dto.getEmployeeID() + " " + dto.getEmployeeName() + " " + dto.getEmployeeContact() + " " + dto.getHireDate() + " " + dto.getEmployeeStatus() + " " + dto.getAddress() + " " + dto.getEmail() + " " + dto.getUserName());
+
         return SQLUtil.execute("INSERT INTO employee (EmployeeID, Name, Contact, HireDate, Status, Address, Email, UserName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 dto.getEmployeeID(), dto.getEmployeeName(), dto.getEmployeeContact(), dto.getHireDate(), dto.getEmployeeStatus(), dto.getAddress(), dto.getEmail(), dto.getUserName());
+
     }
 
     @Override

@@ -54,6 +54,15 @@ public class UpdateEmployeeDAOImpl implements UpdateEmployeeDAO {
     }
 
     public String getEmployeeEmail(String employeeID) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("SELECT Email FROM employee WHERE EmployeeID = ?", employeeID);
+//        return SQLUtil.execute("SELECT Email FROM employee WHERE EmployeeID = ?", employeeID);
+        Connection connection = DBConnection.getInstance().getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT Email FROM employee WHERE EmployeeID = ?");
+        statement.setString(1, employeeID);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            return resultSet.getString("Email");
+        } else {
+            return null;
+        }
     }
 }

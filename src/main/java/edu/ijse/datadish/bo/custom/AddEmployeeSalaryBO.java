@@ -6,24 +6,18 @@ import edu.ijse.datadish.dto.SalaryDto;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface AddEmployeeSalaryBO extends SuperBO {
 
     ArrayList<EmployeeDto> getAll() throws SQLException, ClassNotFoundException;
-
     boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException;
-
     void update(EmployeeDto dto) throws SQLException, ClassNotFoundException;
-
     boolean exist(String id) throws SQLException, ClassNotFoundException;
-
     void delete(String id) throws SQLException, ClassNotFoundException;
-
     String generateNewId(String employeeName) throws SQLException, ClassNotFoundException;
-
     boolean save(SalaryDto salaryDto) throws SQLException, ClassNotFoundException;
-
     String generateNewId() throws SQLException, ClassNotFoundException;
-
     EmployeeDto search(String id) throws SQLException, ClassNotFoundException;
+    List<String> getEmployeeNames() throws SQLException, ClassNotFoundException;
 }

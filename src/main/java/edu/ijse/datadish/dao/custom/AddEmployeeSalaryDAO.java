@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface AddEmployeeSalaryDAO extends CrudDAO<Employee> {
     String generateNewId(String employeeName) throws SQLException, ClassNotFoundException;
+    List<String> getEmployeeNames() throws SQLException, ClassNotFoundException;
 }

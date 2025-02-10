@@ -28,14 +28,16 @@ public class AddEmployeeBOImpl implements AddEmployeeBO {
             connection = DBConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
 
-            boolean employeeSaved = addEmployeeDAO.save(employee);
-            if (!employeeSaved) {
+            boolean userSaved = addEmployeeDAO.addTOUser(employee);
+            System.out.println("userSaved: " + userSaved);
+            if (!userSaved) {
                 connection.rollback();
                 return false;
             }
 
-            boolean userSaved = addEmployeeDAO.addTOUser(employee);
-            if (!userSaved) {
+            boolean employeeSaved = addEmployeeDAO.save(employee);
+            System.out.println("employeeSaved: " + employeeSaved);
+            if (!employeeSaved) {
                 connection.rollback();
                 return false;
             }

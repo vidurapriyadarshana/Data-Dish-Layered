@@ -56,12 +56,36 @@ public class UpdateEmployeeController implements Initializable {
     public void setEmployeeData(EmployeeDto employeeDto) throws SQLException, ClassNotFoundException {
         this.employeeDto = employeeDto;
         lblEmployeeId.setText(employeeDto.getEmployeeID());
+        System.out.println(employeeDto.getEmployeeName());
+
         lblName.setText(employeeDto.getEmployeeName());
+        System.out.println(employeeDto.getAddress());
+
         txtAddress.setText(employeeDto.getAddress());
+        System.out.println(employeeDto.getEmployeeContact());
+
         txtContact.setText(employeeDto.getEmployeeContact());
+        System.out.println(employeeDto.getHireDate());
+
         lblDate.setText(employeeDto.getHireDate());
+        System.out.println(employeeDto.getEmployeeStatus());
+
         actionStatus.setSelected("Active".equals(employeeDto.getEmployeeStatus()));
-        txtEmail.setText(updateEmployeeBO.getEmployeeEmail(employeeDto.getEmployeeID()));
+
+
+//        txtEmail.setText(updateEmployeeBO.getEmployeeEmail(employeeDto.getEmployeeID()));
+        //System.out.println(updateEmployeeBO.getEmployeeEmail(employeeDto.getEmployeeID()));
+
+        try {
+            String email = updateEmployeeBO.getEmployeeEmail(employeeDto.getEmployeeID());
+            System.out.println("Fetched email: " + email);
+            txtEmail.setText(email);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to fetch email: " + e.getMessage());
+        }
+
+
     }
 
     @FXML
