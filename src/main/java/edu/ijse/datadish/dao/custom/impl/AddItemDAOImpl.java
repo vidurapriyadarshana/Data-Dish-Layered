@@ -17,25 +17,53 @@ import java.util.ArrayList;
 
 public class AddItemDAOImpl implements AddItemDAO {
 
+    @Override
     public ArrayList<Food> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<Food> foodItems = new ArrayList<>();
+        return null;
+    }
 
-        ResultSet rst = SQLUtil.execute("SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem");
+    public ObservableList<FoodDto> loadTable() {
+        ObservableList<FoodDto> foodItems = FXCollections.observableArrayList();
 
-        if (rst != null) {
-            while (rst.next()) {
-                String id = rst.getString("MenuItemID");
-                String name = rst.getString("Name");
-                double price = rst.getDouble("Price");
-                String category = rst.getString("Category");
-                String availability = rst.getString("Availability");
+        try {
+//            Connection connection = DBConnection.getInstance().getConnection();
+//            String query = "SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem";
+//            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = SQLUtil.execute("SELECT MenuItemID, Name, Price, Category, Availability FROM MenuItem");
 
-                Food foodDto = new Food(id, name, price, category, availability, null);
+            while (resultSet.next()) {
+                String id = resultSet.getString("MenuItemID");
+                String name = resultSet.getString("Name");
+                double price = resultSet.getDouble("Price");
+                String category = resultSet.getString("Category");
+                String availability = resultSet.getString("Availability");
+
+                FoodDto foodDto = new FoodDto(id, name, price, category, availability, null);
                 foodItems.add(foodDto);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return foodItems;
+    }
+
+    public boolean deleteFromTable(String id) throws SQLException, ClassNotFoundException {
+//        String sql = "DELETE FROM menuitem WHERE MenuItemID = ?";
+//        try (Connection connection = DBConnection.getInstance().getConnection();
+//             PreparedStatement statement = connection.prepareStatement(sql)) {
+//
+//            statement.setString(1, id);
+//            return statement.executeUpdate() > 0;
+//
+//        } catch (SQLException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+
+        return SQLUtil.execute("DELETE FROM MenuItem WHERE MenuItemID = ?", id);
     }
 
     @Override

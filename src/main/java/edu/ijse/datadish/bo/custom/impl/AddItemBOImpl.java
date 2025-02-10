@@ -7,6 +7,7 @@ import edu.ijse.datadish.dao.SQLUtil;
 import edu.ijse.datadish.dao.custom.impl.AddItemDAOImpl;
 import edu.ijse.datadish.dto.FoodDto;
 import edu.ijse.datadish.entity.Food;
+import javafx.collections.ObservableList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,17 +15,10 @@ import java.util.ArrayList;
 
 public class AddItemBOImpl implements AddItemBO {
 
-    AddItemDAOImpl addItemDAO = (AddItemDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.ADD_FOOD_ITEM);
+    AddItemDAOImpl addItemDAO = (AddItemDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.ADD_ITEM);
 
     public ArrayList<FoodDto> getAll() throws SQLException, ClassNotFoundException {
-        ArrayList<Food> foods = addItemDAO.getAll();
-        ArrayList<FoodDto> foodDtos = new ArrayList<>();
-
-        for (Food food : foods) {
-            foodDtos.add(DTOConverter.toDTO(food, FoodDto.class));
-        }
-
-        return foodDtos;
+        return null;
     }
 
     public boolean save(FoodDto dto) throws SQLException, ClassNotFoundException {
@@ -49,6 +43,16 @@ public class AddItemBOImpl implements AddItemBO {
 
     public FoodDto search(String id) throws SQLException, ClassNotFoundException {
         return null;
+    }
+
+    @Override
+    public ObservableList<FoodDto> loadTable() {
+        return addItemDAO.loadTable();
+    }
+
+    @Override
+    public boolean deleteFromTable(String id) throws SQLException, ClassNotFoundException {
+        return addItemDAO.deleteFromTable(id);
     }
 
 }

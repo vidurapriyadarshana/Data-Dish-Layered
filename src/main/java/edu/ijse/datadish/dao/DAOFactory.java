@@ -38,51 +38,30 @@ public class DAOFactory {
     }
 
     public SuperDAO getDAO(DAOTypes daoTypes) {
-        switch (daoTypes) {
-            case ADD_EMPLOYEE:
-                return new AddEmployeeDAOImpl();
-            case ADD_EMPLOYEE_SALARY:
-                return new AddEmployeeSalaryDAOImpl();
-            case ADD_FOOD_ITEM:
-                return new AddFoodItemDAOImpl();
-            case ADD_INVENTORY_ITEM:
-                return new AddInventoryItemDAOImpl();
-            case ADD_ITEM:
-                return new AddItemDAOImpl();
-            case ADD_TABLE:
-                return new AddTableDAOImpl();
+        return switch (daoTypes) {
+            case ADD_EMPLOYEE -> new AddEmployeeDAOImpl();
+            case ADD_EMPLOYEE_SALARY -> new AddEmployeeSalaryDAOImpl();
+            case ADD_FOOD_ITEM -> new AddFoodItemDAOImpl();
+            case ADD_INVENTORY_ITEM -> new AddInventoryItemDAOImpl();
+            case ADD_ITEM -> new AddItemDAOImpl();
+            case ADD_TABLE -> new AddTableDAOImpl();
 //            case CHECKOUT:
 //                return new CheckoutDAOImpl();
-            case EDIT_FOOD_ITEM:
-                return new EditFoodItemDAOImpl();
-            case EMPLOYEE_VIEW:
-                return new EmployeeViewDAOImpl();
-            case HOME_PAGE:
-                return new HomePageDAOImpl();
-            case INVENTORY:
-                return new InventoryDAOImpl();
-            case LOGIN:
-                return new LogInDAOImpl();
-            case PAYMENT_FORM:
-                return new PaymentFormDAOImpl();
-            case QUERY:
-                return new QuoryDAOImpl();
-            case TABLE_VIEW:
-                return new TableViewDAOImpl();
-            case UPDATE_EMPLOYEE:
-                return new UpdateEmployeeDAOImpl();
-            case CUSTOMER:
-                return new CustomerDAOImpl();
-            case ORDER:
-                return new OrderDAOImpl();
-            case MENU:
-                return new MenuDAOImpl();
-            case PAYMENT:
-                return new PaymentDAOImpl();
-            case NOTIFICATION:
-                return new NotificationDAOImpl();
-            default:
-                return null;
-        }
+            case EDIT_FOOD_ITEM -> new EditFoodItemDAOImpl();
+            case EMPLOYEE_VIEW -> new EmployeeViewDAOImpl();
+            case HOME_PAGE -> new HomePageDAOImpl();
+            case INVENTORY -> new InventoryDAOImpl();
+            case LOGIN -> new LogInDAOImpl();
+            case PAYMENT_FORM -> new PaymentFormDAOImpl();
+            case QUERY -> new QuoryDAOImpl();
+            case TABLE_VIEW -> new TableViewDAOImpl();
+            case UPDATE_EMPLOYEE -> new UpdateEmployeeDAOImpl();
+            case CUSTOMER -> new CustomerDAOImpl();
+            case ORDER -> new OrderDAOImpl();
+            case MENU -> new MenuDAOImpl();
+            case PAYMENT -> new PaymentDAOImpl();
+            case NOTIFICATION -> new NotificationDAOImpl();
+            default -> null;
+        };
     }
 }
